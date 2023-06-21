@@ -1,0 +1,6 @@
+CREATE TABLE event_user (
+    id SERIAL PRIMARY KEY,
+    event_id INT NOT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
