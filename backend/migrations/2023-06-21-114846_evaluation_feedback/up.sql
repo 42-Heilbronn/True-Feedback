@@ -1,6 +1,6 @@
 CREATE TABLE evaluation_feedback (
     id SERIAL PRIMARY KEY,
-    evaluation_id INT NOT NULL REFERENCES evaluation(id),
+    evaluation_id INT NOT NULL REFERENCES evaluation(id) ON DELETE CASCADE,
     user_id INT NOT NULL,
     feedback JSONB NULL,
     feedback_at TIMESTAMP NULL,
