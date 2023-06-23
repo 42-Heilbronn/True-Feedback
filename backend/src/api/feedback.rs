@@ -37,7 +37,7 @@ async fn missing_feedback(
 ) -> Result<HttpResponse, ApiError> {
     let user_id = 139607;
     log::warn!("DEBUG USER ID NO IDENTITY!");
-    let missing_feedback = db.get_missing_evaluation_feedback(user_id).await?;
+    let missing_feedback = db.get_missing_evaluation_feedbacks_from_user(user_id).await?;
     let missing_feedback: Vec<FeedbackListEntry> = missing_feedback
         .into_iter()
         .map(|(feedback, evaluation)| FeedbackListEntry {
@@ -75,7 +75,7 @@ async fn evaluation_feedback_info(
     client: web::Data<awc::Client>,
     auth_client: web::Data<oauth2::basic::BasicClient>,
 ) -> Result<HttpResponse, ApiError> {
-    let user_id = 123;
+    let user_id = 139607;
     log::warn!("DEBUG USER ID NO IDENTITY!");
     let feedback = db.get_evaluation_feedback(*feedback_id).await?;
     if user_id.ne(&feedback.user_id) {
@@ -113,15 +113,16 @@ async fn evaluation_feedback_info(
 async fn post_feedback(
     // id: Identity,
     db: web::Data<Database>,
+    feedback_id: web::Path<i32>,
     feedback_post: web::Json<Feedback>,
 ) -> Result<HttpResponse, ApiError> {
     let user_id = 139607;
     log::warn!("DEBUG USER ID NO IDENTITY!");
-    let mut feedback = db.get_evaluation_feedback(feedback_post.id).await?;
-    if user_id.ne(&feedback.user_id) {
+    let mut feedback = db.get_evaluation_feedback(*feedback_id).await?;
+    if user_id.ne(&feedback.user_id) | feedback.feedback.is_some() {
         return Err(ApiError::Unauthorized);
     }
-    feedback.feedback = Some(serde_json::json!(feedback_post.fields));
+    feedback.feedback = Some(serde_json::json!(feedback_post));
     db.update_evaluation_feedback(feedback).await?;
     Ok(HttpResponse::Ok().finish())
 }
