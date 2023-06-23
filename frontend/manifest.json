@@ -1,0 +1,29 @@
+{
+
+  "manifest_version": 2,
+  "name": "True Feedback",
+  "version": "0.1",
+
+  "browser_action": {
+    "default_popup": "button.html"
+  },
+
+  "description": "",
+
+  "icons": {
+    "48": "icons/48.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.intra.42.fr/*"],
+      "js": ["test.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "permissions": [
+    "activeTab"
+  ]
+
+}
