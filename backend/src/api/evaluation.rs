@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/evaluation")
-            .service(web::resource("/create").route(web::post().to(add_evauation)))
+            .service(web::resource("/").route(web::post().to(add_evauation)))
             .service(web::resource("/delete").route(web::post().to(delete_evauation))),
     );
 }

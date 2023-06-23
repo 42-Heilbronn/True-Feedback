@@ -3,14 +3,8 @@
 use serde::{Serialize, Deserialize};
 use validator::{Validate};
 
-#[derive(Deserialize)]
-pub struct Feedback {
-    pub id: i32,
-    pub fields: FeedbackFields
-}
-
 #[derive(Deserialize, Serialize, Validate)]
-pub struct FeedbackFields {
+pub struct Feedback {
     #[validate(range(min = 0, max = 10))]
     pub understanding: i32,
     #[validate(range(min = 0, max = 10))]

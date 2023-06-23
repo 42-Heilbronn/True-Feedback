@@ -56,7 +56,7 @@ impl Database {
             .await?)
     }
 
-    pub async fn get_missing_evaluation_feedback(
+    pub async fn get_missing_evaluation_feedbacks_from_user(
         &self,
         user_id: i32,
     ) -> anyhow::Result<Vec<(EvaluationFeedback, Evaluation)>> {
