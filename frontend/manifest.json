@@ -1,29 +1,32 @@
 {
-
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "True Feedback",
   "version": "0.1",
-
-  "browser_action": {
-    "default_popup": "button.html"
-  },
-
   "description": "",
 
   "icons": {
     "48": "icons/48.png"
   },
 
+  "permissions": [
+    "storage", "scripting"
+  ],
+
+  "host_permissions": [
+		"http://feedback.42heilbronn.de/*",
+		"https://*.intra.42.fr/*"
+	],
+
+  "background": {
+    "service_worker": "bg_page.js",
+    "type": "module"
+  },
+
   "content_scripts": [
     {
       "matches": ["https://*.intra.42.fr/*"],
-      "js": ["test.js"],
+      "js": ["lib/storage.js", "lib/network.js", "init.js"],
       "run_at": "document_end"
     }
-  ],
-
-  "permissions": [
-    "activeTab"
   ]
-
 }
