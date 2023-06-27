@@ -8,24 +8,16 @@
     "48": "icons/48.png"
   },
 
-  "permissions": [
-    "storage", "scripting"
-  ],
-
   "host_permissions": [
 		"http://feedback.42heilbronn.de/*",
+    "https://webhook.site/*",
 		"https://*.intra.42.fr/*"
 	],
-
-  "background": {
-    "service_worker": "bg_page.js",
-    "type": "module"
-  },
 
   "content_scripts": [
     {
       "matches": ["https://*.intra.42.fr/*"],
-      "js": ["lib/storage.js", "lib/network.js", "init.js"],
+      "js": ["test.js"],
       "run_at": "document_end"
     }
   ]

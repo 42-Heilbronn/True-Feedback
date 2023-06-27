@@ -1,35 +1,69 @@
+const test = `[
+    {
+        "id": 3,
+        "evaluation": {
+            "team": "schibane's group-1",
+            "project": "push_swap",
+            "begin_at": "2023-06-21T21:30:00"
+        }
+    },
+    {
+        "id": 5,
+        "evaluation": {
+            "team": "schibane's group-1",
+            "project": "push_swap",
+            "begin_at": "2023-06-21T21:30:00"
+        }
+    }
+]`;
+
+class EvalInfo
+{
+    constructor(peer)
+    {
+        this.peer = peer;
+        this.eval_slot;
+        this.questions;
+        this.popup;
+    }
+}
+
 const evals = new Map();
-const popups = new Map();
+
+// fetch('https://webhook.site/5e872038-ca12-410f-aec6-7bd62c9008ee')
+// .then(res => res.json())
+// .then(json => console.log(json));
 
 create();
 
 function create()
 {
-    if (true) //check for api call if the user has any finished evals
-    {
-        create_eval("Patrick");
-        create_form("Patrick");
-        create_eval("Gerhard");
-        create_form("Gerhard");
-    }
+    let missing = JSON.parse(test);
+    missing.forEach(element => {
+        evals.set(element.id, new EvalInfo(element.evaluation));
+        create_eval(element.id);
+    });
 }
 
-function create_eval(name)
+function create_eval(id)
 {
     let eval_list = document.getElementById("collapseEvaluations");
     let eval = document.createElement("div");
 
     eval.classList.add("project-item", "reminder", "event");
+
     eval.innerHTML = `
-    <div class="project-item-text">Please submit honest feedback for your eval with ${name}</div>
+    <div class="project-item-text"></div>
     <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it. WHy do they do that? Dunno
-    eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(name)}); //adds a function call to show the popup to the a tag
+    eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
+    eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)}); //adds a function call to show the popup
 
     eval_list.appendChild(eval);
-    evals.set(name, eval);
+    evals.get(id).eval_slot = eval;
+    create_popup(id);
 }
 
-function create_form(name)
+function create_popup(id) //rewrite because of possible xss injections
 {
     let popup = document.createElement('div');
 
@@ -38,7 +72,7 @@ function create_form(name)
     popup.innerHTML = `
     <form style="background: #ffffff; padding: 20px; width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 20px; position: relative;">
         <span class="iconf-delete-2-1" style="position: absolute; top: 20px; right: 20px; color: red; cursor: pointer;"></span>
-        <h1>🔊 Feedback for ${name} 🔊</h1>
+        <h1>🔊 Feedback for ${evals.get(id).peer.team} 🔊</h1>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         <div style="display: flex; flex-direction: column; gap: 10px;">
             <label for="q1" style="margin-bottom: 0px;">Question 1</label>
@@ -69,44 +103,37 @@ function create_form(name)
         </div>
         <span class="btn btn-primary" style="margin: 0 auto; border-radius: 5px; font-size: 17px; padding: 6px 18px;">Submit</span>
     </form>`;
-    popup.firstElementChild.firstElementChild.addEventListener("click", function() {showPopup(name)}); //adds a function call to hide the popup to the span tag, needs to be function in a function bec js
-    console.log(popup.firstElementChild.lastElementChild);
-    popup.firstElementChild.lastElementChild.addEventListener("click", function() {submitForm(name)});
+    popup.firstElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)}); //adds a function call to hide the popup, needs to be function in a function bec js
+    popup.firstElementChild.lastElementChild.addEventListener("click", function() {submitForm(id)});
 
     document.body.appendChild(popup);
-    popups.set(name, popup);
+    evals.get(id).popup = popup;
 }
 
-function showPopup(name)
+function showPopup(id)
 {
-    if (popups.get(name).style.visibility == "hidden")
-        popups.get(name).style.visibility  = "visible";
+    if (evals.get(id).popup.style.visibility == "hidden")
+        evals.get(id).popup.style.visibility  = "visible";
     else
-        popups.get(name).style.visibility  = "hidden";
+        evals.get(id).popup.style.visibility  = "hidden";
 }
 
-function submitForm(name)
+function submitForm(id)
 {
-    popups.get(name).remove();
-    evals.get(name).remove();
-    popups.delete(name);
-    evals.delete(name);
+    console.log(evals.get(id).popup.firstElementChild[0]);
+    // fetch("https://reqbin.com/echo/post/json", {
+    // method: "POST",
+    // body: JSON.stringify({
+    //     understanding: 5,
+    //     uniqueness: 4,
+    //     friendliness: 3,
+    //     comment: "gay"
+    // }),
+    // headers: {
+    //     "Content-type": "application/json; charset=UTF-8"
+    // }
+    // }).then(res => res.json()).then(json => console.log(json));
+    evals.get(id).eval_slot.remove();
+    evals.get(id).popup.remove();
+    evals.delete(id);
 }
-
-//         // Get the form data
-//         let data = new FormData(feedbackForm);
-
-//         // Send the form data to the server
-//         GM_xmlhttpRequest({
-//             method: 'POST',
-//             url: 'https://webhook.site/5e872038-ca12-410f-aec6-7bd62c9008ee',
-//             data: data,
-//             headers: {
-//                 'Content-Type': 'application/x-www-form-urlencoded'
-//             },
-//             onload: function(response) {
-//                 alert('Your feedback has been submitted!');
-//                 popup.style.display = "none"; // close the popup
-//             }
-//         });
-//     };
