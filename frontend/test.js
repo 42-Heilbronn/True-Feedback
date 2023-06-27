@@ -17,6 +17,55 @@ const test = `[
     }
 ]`;
 
+const form_test = `
+{
+    "id": 5,
+    "evaluation": {
+        "team": "schibane's group-1",
+        "project": "push_swap",
+        "begin_at": "2023-06-21T21:30:00Z",
+        "correcteds": [
+            "schibane"
+        ],
+        "corrector": "oemelyan"
+    },
+    "fields": [
+        {
+            "key": "understanding",
+            "name": "The code was thoroughly understood",
+            "description": "Any Questions regarding the overall structure, design choices and individual functions could be answered flawlessly.",
+            "data_type": {
+                "Range": [
+                    0,
+                    10
+                ]
+            }
+        },
+        {
+            "key": "uniqueness",
+            "name": "The solution was unique",
+            "description": "The solution provided a fresh perspective or approach that set it apart from conventional methods or existing alternatives?",
+            "data_type": {
+                "Range": [
+                    0,
+                    10
+                ]
+            }
+        },
+        {
+            "key": "friendliness",
+            "name": "The evaluation was very pleasant",
+            "description": "The atmosphere throughout the entire process was very friendly. There was no discomfort and no uneasiness.",
+            "data_type": {
+                "Range": [
+                    0,
+                    10
+                ]
+            }
+        }
+    ]
+}`;
+
 class EvalInfo
 {
     constructor(peer)
@@ -29,6 +78,7 @@ class EvalInfo
 }
 
 const evals = new Map();
+hasChanged = false;
 
 // fetch('https://webhook.site/5e872038-ca12-410f-aec6-7bd62c9008ee')
 // .then(res => res.json())
@@ -66,48 +116,56 @@ function create_eval(id)
 function create_popup(id) //rewrite because of possible xss injections
 {
     let popup = document.createElement('div');
+    let content = JSON.parse(form_test).fields;
 
-    popup.style = "position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;";
-    popup.style.visibility = "hidden";
+    popup.style = "position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center; visibility: hidden;";
     popup.innerHTML = `
     <form style="background: #ffffff; padding: 20px; width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 20px; position: relative;">
         <span class="iconf-delete-2-1" style="position: absolute; top: 20px; right: 20px; color: red; cursor: pointer;"></span>
         <h1>🔊 Feedback for ${evals.get(id).peer.team} 🔊</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <label for="q1" style="margin-bottom: 0px;">Question 1</label>
-            <p style="font-size: 13px; margin: 0px;">Description</p>
-            <input type="range" id="q1" name="q1" min="0" max="5" value="0">
-            <div>
-                <p style="font-size: 13px; margin: 0px; color: red; float: left;">Disagree</p>
-                <p style="font-size: 13px; margin: 0px; color: #00babc; float: right;">Agree</p>
-            </div>
-            <label for="q2" style="margin-bottom: 0px;">Question 2</label>
-            <p style="font-size: 13px; margin: 0px;">Description</p>
-            <input type="range" id="q1" name="q1" min="0" max="5" value="0">
-            <div>
-                <p style="font-size: 13px; margin: 0px; color: red; float: left;">Disagree</p>
-                <p style="font-size: 13px; margin: 0px; color: #00babc; float: right;">Agree</p>
-            </div>
-            <label for="q3" style="margin-bottom: 0px;">Question 3</label>
-            <p style="font-size: 13px; margin: 0px;">Description</p>
-            <input type="range" id="q1" name="q1" min="0" max="5" value="0">
-            <div>
-                <p style="font-size: 13px; margin: 0px; color: red; float: left;">Disagree</p>
-                <p style="font-size: 13px; margin: 0px; color: #00babc; float: right;">Agree</p>
-            </div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <label for="feedback">(Optional) Provide additional feedback:</label>
-            <textarea id="feedback" name="feedback" rows="4" style="resize:vertical;"></textarea>
         </div>
         <span class="btn btn-primary" style="margin: 0 auto; border-radius: 5px; font-size: 17px; padding: 6px 18px;">Submit</span>
     </form>`;
+
+    content.forEach(element => {
+        create_slider(element, popup.firstElementChild.lastElementChild.previousElementSibling)
+    });
+
     popup.firstElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)}); //adds a function call to hide the popup, needs to be function in a function bec js
     popup.firstElementChild.lastElementChild.addEventListener("click", function() {submitForm(id)});
 
     document.body.appendChild(popup);
     evals.get(id).popup = popup;
+}
+
+function create_slider(content, content_div)
+{
+    let label = document.createElement("label");
+    let description = document.createElement("p");
+    let slider = document.createElement("input");
+    // let agree = document.createElement("div");
+
+    label.htmlFor = content.key;
+    label.style = "margin-bottom: 0px;";
+    label.innerText = content.name;
+
+    description.style = "font-size: 13px; margin:0px;";
+    description.innerText = content.description;
+
+    slider.type = "range";
+    slider.id = content.key;
+    slider.name = content.key;
+    slider.min = content.data_type.Range[0];
+    slider.max = content.data_type.Range[1];
+    slider.value = content.data_type.Range[1] / 2;
+    slider.onchange = function (){hasChanged = true;};
+
+    content_div.appendChild(label);
+    content_div.appendChild(description);
+    content_div.appendChild(slider);
+
+    console.log(slider.value);
 }
 
 function showPopup(id)
@@ -120,6 +178,8 @@ function showPopup(id)
 
 function submitForm(id)
 {
+    if (hasChanged == false)
+        return alert("Please note that your form submission appears to be incomplete as none of the sliders have been adjusted. To ensure accurate information, kindly review and adjust the sliders accordingly before resubmitting. Thank you for your cooperation.");
     console.log(evals.get(id).popup.firstElementChild[0]);
     // fetch("https://reqbin.com/echo/post/json", {
     // method: "POST",
