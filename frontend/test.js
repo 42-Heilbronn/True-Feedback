@@ -62,6 +62,14 @@ const form_test = `
                     10
                 ]
             }
+        },
+        {
+            "key": "comment",
+            "name": "Comment",
+            "description": "Optional comment you would like to share with bocal",
+            "data_type": {
+                "String": 1024
+            }
         }
     ]
 }`;
@@ -129,7 +137,10 @@ function create_popup(id) //rewrite because of possible xss injections
     </form>`;
 
     content.forEach(element => {
-        create_slider(element, popup.firstElementChild.lastElementChild.previousElementSibling)
+        if (element.data_type.Range != null)
+            create_slider(element, popup.firstElementChild.lastElementChild.previousElementSibling);
+        else
+            create_textarea(element, popup.firstElementChild.lastElementChild.previousElementSibling);
     });
 
     popup.firstElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)}); //adds a function call to hide the popup, needs to be function in a function bec js
@@ -144,7 +155,7 @@ function create_slider(content, content_div)
     let label = document.createElement("label");
     let description = document.createElement("p");
     let slider = document.createElement("input");
-    // let agree = document.createElement("div");
+    let agree = document.createElement("div");
 
     label.htmlFor = content.key;
     label.style = "margin-bottom: 0px;";
@@ -161,11 +172,37 @@ function create_slider(content, content_div)
     slider.value = content.data_type.Range[1] / 2;
     slider.onchange = function (){hasChanged = true;};
 
+    agree.innerHTML = `
+    <p style="font-size: 13px; margin: 0px; color: red; float: left;">Disagree</p>
+    <p style="font-size: 13px; margin: 0px; color: #00babc; float: right;">Agree</p>`
+
     content_div.appendChild(label);
     content_div.appendChild(description);
     content_div.appendChild(slider);
+    content_div.appendChild(agree);
+}
 
-    console.log(slider.value);
+function create_textarea(content, content_div)
+{
+    let label = document.createElement("label");
+    let description = document.createElement("p");
+    let textarea = document.createElement("textarea");
+
+    label.htmlFor = content.key;
+    label.style = "margin-bottom: 0px;";
+    label.innerText = content.name;
+
+    description.style = "font-size: 13px; margin:0px;";
+    description.innerText = content.description;
+
+    textarea.id = content.key;
+    textarea.name = content.key;
+    textarea.rows = 4;
+    textarea.style = "resize: vertical;";
+
+    content_div.appendChild(label);
+    content_div.appendChild(description);
+    content_div.appendChild(textarea);
 }
 
 function showPopup(id)
@@ -178,16 +215,23 @@ function showPopup(id)
 
 function submitForm(id)
 {
+    let data = {};
+
     if (hasChanged == false)
         return alert("Please note that your form submission appears to be incomplete as none of the sliders have been adjusted. To ensure accurate information, kindly review and adjust the sliders accordingly before resubmitting. Thank you for your cooperation.");
-    console.log(evals.get(id).popup.firstElementChild[0]);
+    
+    Array.from(evals.get(id).popup.firstElementChild).forEach(element => {
+        console.log(element);
+        data[element.id] = element.value;
+    });
+    console.log(data);
     // fetch("https://reqbin.com/echo/post/json", {
     // method: "POST",
     // body: JSON.stringify({
     //     understanding: 5,
     //     uniqueness: 4,
     //     friendliness: 3,
-    //     comment: "gay"
+    //     comment: "ey"
     // }),
     // headers: {
     //     "Content-type": "application/json; charset=UTF-8"
