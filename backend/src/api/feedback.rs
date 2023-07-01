@@ -1,10 +1,10 @@
-use super::feedback_structure::{Feedback, FeedbackStructureField, FEEDBACK_FIELDS_EVALUATION};
-use crate::api_42::scale_team::get_scale_team;
+use super::feedback_structure::{FeedbackEvaluator, FeedbackStructureField, FEEDBACK_EVALUATOR_FIELDS};
+use crate::{api_42::scale_team::get_scale_team};
 use crate::db::Database;
 // use actix_identity::Identity;
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use super::error::ApiError;
 
@@ -105,16 +105,23 @@ async fn evaluation_feedback_info(
     let feedback_info = FeedbackInfo {
         id: *feedback_id,
         evaluation: evaluation_info,
-        fields: FEEDBACK_FIELDS_EVALUATION.to_vec(),
+        fields: FEEDBACK_EVALUATOR_FIELDS.to_vec(),
     };
     return Ok(HttpResponse::Ok().json(feedback_info));
 }
+
+// #[derive(Deserialize)]
+// #[serde(untagged)]
+// enum Feedback {
+//     Evaluator(FeedbackEvaluator),
+//     Evaluated(),
+// }
 
 async fn post_feedback(
     // id: Identity,
     db: web::Data<Database>,
     feedback_id: web::Path<i32>,
-    feedback_post: web::Json<Feedback>,
+    feedback_post: web::Json<FeedbackEvaluator>,
 ) -> Result<HttpResponse, ApiError> {
     let user_id = 139607;
     log::warn!("DEBUG USER ID NO IDENTITY!");
@@ -122,6 +129,7 @@ async fn post_feedback(
     if user_id.ne(&feedback.user_id) | feedback.feedback.is_some() {
         return Err(ApiError::Unauthorized);
     }
+    
     feedback.feedback = Some(serde_json::json!(feedback_post));
     db.update_evaluation_feedback(feedback).await?;
     Ok(HttpResponse::Ok().finish())
