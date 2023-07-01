@@ -4,7 +4,7 @@ use crate::db::Database;
 // use actix_identity::Identity;
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
-use serde::{Serialize, Deserialize};
+use serde::{Serialize};
 
 use super::error::ApiError;
 
