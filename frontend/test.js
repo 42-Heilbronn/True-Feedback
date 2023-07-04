@@ -93,14 +93,24 @@ hasChanged = false;
 // .then(json => console.log(json));
 
 create();
+window.setInterval(create, 300000); //5 mins
 
 function create()
 {
+    console.log("create");
     let missing = JSON.parse(test);
     missing.forEach(element => {
-        evals.set(element.id, new EvalInfo(element.evaluation));
-        create_eval(element.id);
+        if (evals.has(element.id) == false)
+        {
+            evals.set(element.id, new EvalInfo(element.evaluation));
+            create_eval(element.id);
+        }
     });
+}
+
+function checkWeatherAPI()
+{
+    alert("sus");
 }
 
 function create_eval(id)
