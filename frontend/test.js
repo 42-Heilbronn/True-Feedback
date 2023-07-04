@@ -135,11 +135,12 @@ function create_popup(id) //rewrite because of possible xss injections
     popup.innerHTML = `
     <form style="background: #ffffff; padding: 20px; width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 20px; position: relative;">
         <span class="iconf-delete-2-1" style="position: absolute; top: 20px; right: 20px; color: red; cursor: pointer;"></span>
-        <h1>🔊 Feedback for ${evals.get(id).peer.team} 🔊</h1>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-        </div>
+        <h1></h1>
+        <div style="display: flex; flex-direction: column; gap: 10px;"></div>
         <span class="btn btn-primary" style="margin: 0 auto; border-radius: 5px; font-size: 17px; padding: 6px 18px;">Submit</span>
     </form>`;
+
+    popup.firstElementChild.firstElementChild.nextElementSibling.innerText = `🔊 Feedback for ${evals.get(id).peer.team} 🔊`;
 
     content.forEach(element => {
         if (element.data_type.Range != null)
