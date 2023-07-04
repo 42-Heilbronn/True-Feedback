@@ -108,11 +108,6 @@ function create()
     });
 }
 
-function checkWeatherAPI()
-{
-    alert("sus");
-}
-
 function create_eval(id)
 {
     let eval_list = document.getElementById("collapseEvaluations");

@@ -5,7 +5,8 @@
   "description": "",
 
   "icons": {
-    "48": "icons/48.png"
+    "48": "icons/48.png",
+    "96": "icons/96.png"
   },
 
   "host_permissions": [
