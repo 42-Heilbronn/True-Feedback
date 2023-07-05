@@ -1,6 +1,7 @@
 use super::feedback_structure::{FeedbackEvaluator, FeedbackStructureField, FEEDBACK_EVALUATOR_FIELDS};
 use crate::{api_42::scale_team::get_scale_team};
 use crate::db::Database;
+use actix_identity::Identity;
 // use actix_identity::Identity;
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
@@ -32,11 +33,11 @@ struct FeedbackListEvaluationEnrty {
 }
 
 async fn missing_feedback(
-    //id: Identity,
+    id: Identity,
     db: web::Data<Database>,
 ) -> Result<HttpResponse, ApiError> {
-    let user_id = 139607;
-    log::warn!("DEBUG USER ID NO IDENTITY!");
+    let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
+    // log::warn!("DEBUG USER ID NO IDENTITY!");
     let missing_feedback = db.get_missing_evaluation_feedbacks_from_user(user_id).await?;
     let missing_feedback: Vec<FeedbackListEntry> = missing_feedback
         .into_iter()
@@ -69,14 +70,14 @@ struct EvaluationInfo {
 }
 
 async fn evaluation_feedback_info(
-    // id: Identity,
+    id: Identity,
     db: web::Data<Database>,
     feedback_id: web::Path<i32>,
     client: web::Data<awc::Client>,
     auth_client: web::Data<oauth2::basic::BasicClient>,
 ) -> Result<HttpResponse, ApiError> {
-    let user_id = 139607;
-    log::warn!("DEBUG USER ID NO IDENTITY!");
+    let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
+    // log::warn!("DEBUG USER ID NO IDENTITY!");
     let feedback = db.get_evaluation_feedback(*feedback_id).await?;
     if user_id.ne(&feedback.user_id) {
         return Err(ApiError::Unauthorized);
@@ -118,13 +119,13 @@ async fn evaluation_feedback_info(
 // }
 
 async fn post_feedback(
-    // id: Identity,
+    id: Identity,
     db: web::Data<Database>,
     feedback_id: web::Path<i32>,
     feedback_post: web::Json<FeedbackEvaluator>,
 ) -> Result<HttpResponse, ApiError> {
-    let user_id = 139607;
-    log::warn!("DEBUG USER ID NO IDENTITY!");
+    let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
+    // log::warn!("DEBUG USER ID NO IDENTITY!");
     let mut feedback = db.get_evaluation_feedback(*feedback_id).await?;
     if user_id.ne(&feedback.user_id) | feedback.feedback.is_some() {
         return Err(ApiError::Unauthorized);
