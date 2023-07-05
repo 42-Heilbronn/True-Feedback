@@ -10,8 +10,7 @@
   },
 
   "host_permissions": [
-		"http://feedback.42heilbronn.de/*",
-    "https://webhook.site/*",
+    "https://dev01.playground.extension.42heilbronn.de/*",
 		"https://*.intra.42.fr/*"
 	],
 

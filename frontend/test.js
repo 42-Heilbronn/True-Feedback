@@ -1,110 +1,35 @@
-const test = `[
-    {
-        "id": 3,
-        "evaluation": {
-            "team": "schibane's group-1",
-            "project": "push_swap",
-            "begin_at": "2023-06-21T21:30:00"
-        }
-    },
-    {
-        "id": 5,
-        "evaluation": {
-            "team": "schibane's group-1",
-            "project": "push_swap",
-            "begin_at": "2023-06-21T21:30:00"
-        }
-    }
-]`;
-
-const form_test = `
-{
-    "id": 5,
-    "evaluation": {
-        "team": "schibane's group-1",
-        "project": "push_swap",
-        "begin_at": "2023-06-21T21:30:00Z",
-        "correcteds": [
-            "schibane"
-        ],
-        "corrector": "oemelyan"
-    },
-    "fields": [
-        {
-            "key": "understanding",
-            "name": "The code was thoroughly understood",
-            "description": "Any Questions regarding the overall structure, design choices and individual functions could be answered flawlessly.",
-            "data_type": {
-                "Range": [
-                    0,
-                    10
-                ]
-            }
-        },
-        {
-            "key": "uniqueness",
-            "name": "The solution was unique",
-            "description": "The solution provided a fresh perspective or approach that set it apart from conventional methods or existing alternatives?",
-            "data_type": {
-                "Range": [
-                    0,
-                    10
-                ]
-            }
-        },
-        {
-            "key": "friendliness",
-            "name": "The evaluation was very pleasant",
-            "description": "The atmosphere throughout the entire process was very friendly. There was no discomfort and no uneasiness.",
-            "data_type": {
-                "Range": [
-                    0,
-                    10
-                ]
-            }
-        },
-        {
-            "key": "comment",
-            "name": "Comment",
-            "description": "Optional comment you would like to share with bocal",
-            "data_type": {
-                "String": 1024
-            }
-        }
-    ]
-}`;
-
 class EvalInfo
 {
     constructor(peer)
     {
         this.peer = peer;
         this.eval_slot;
-        this.questions;
         this.popup;
     }
 }
 
+const SERVER_IP = "https://dev01.playground.extension.42heilbronn.de/api";
 const evals = new Map();
-hasChanged = false;
-
-// fetch('https://webhook.site/5e872038-ca12-410f-aec6-7bd62c9008ee')
-// .then(res => res.json())
-// .then(json => console.log(json));
+var hasChanged = false;
+// fetch(`${SERVER_IP}/ping`)
+// .then(res => console.log(res.ok));
 
 create();
 window.setInterval(create, 300000); //5 mins
 
 function create()
 {
-    console.log("create");
-    let missing = JSON.parse(test);
-    missing.forEach(element => {
-        if (evals.has(element.id) == false)
-        {
-            evals.set(element.id, new EvalInfo(element.evaluation));
-            create_eval(element.id);
-        }
+    fetch(`${SERVER_IP}/feedback/missing`)
+    .then(res => res.json())
+    .then(function(json)
+    {
+        json.forEach(element => {
+            if (evals.has(element.id) == false)
+            {
+                evals.set(element.id, new EvalInfo(element.evaluation));
+                create_eval(element.id);
+            }
+        });
     });
 }
 
@@ -117,19 +42,23 @@ function create_eval(id)
 
     eval.innerHTML = `
     <div class="project-item-text"></div>
-    <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it. WHy do they do that? Dunno
+    <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it. Why do they do that? Dunno
     eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
     eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)}); //adds a function call to show the popup
 
     eval_list.appendChild(eval);
     evals.get(id).eval_slot = eval;
-    create_popup(id);
+    fetch(`${SERVER_IP}/feedback/${id}/info`)
+    .then(res => res.json())
+    .then(function(json)
+    {
+        create_popup(id, json.fields);
+    });
 }
 
-function create_popup(id) //rewrite because of possible xss injections
+function create_popup(id, content) //rewrite because of possible xss injections
 {
     let popup = document.createElement('div');
-    let content = JSON.parse(form_test).fields;
 
     popup.style = "position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center; visibility: hidden;";
     popup.innerHTML = `
@@ -226,23 +155,21 @@ function submitForm(id)
     if (hasChanged == false)
         return alert("Please note that your form submission appears to be incomplete as none of the sliders have been adjusted. To ensure accurate information, kindly review and adjust the sliders accordingly before resubmitting. Thank you for your cooperation.");
     
-    Array.from(evals.get(id).popup.firstElementChild).forEach(element => {
-        console.log(element);
-        data[element.id] = element.value;
+    Array.from(evals.get(id).popup.firstElementChild).forEach(element => {  
+        if (element.nodeName == "INPUT") //slider
+            data[element.id] = parseInt(element.value);
+        else //textbox
+            data[element.id] = element.value;
     });
-    console.log(data);
-    // fetch("https://reqbin.com/echo/post/json", {
-    // method: "POST",
-    // body: JSON.stringify({
-    //     understanding: 5,
-    //     uniqueness: 4,
-    //     friendliness: 3,
-    //     comment: "ey"
-    // }),
-    // headers: {
-    //     "Content-type": "application/json; charset=UTF-8"
-    // }
-    // }).then(res => res.json()).then(json => console.log(json));
+
+    fetch(`${SERVER_IP}/feedback/${id}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+        "Content-type": "application/json; charset=UTF-8"
+    }
+    });
+
     evals.get(id).eval_slot.remove();
     evals.get(id).popup.remove();
     evals.delete(id);
