@@ -44,23 +44,17 @@ function create_eval(id)
     <div class="project-item-text"></div>
     <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it. Why do they do that? Dunno
     eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
-    eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)}); //adds a function call to show the popup
+    eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
 
     eval_list.appendChild(eval);
     evals.get(id).eval_slot = eval;
-    fetch(`${SERVER_IP}/feedback/${id}/info`)
-    .then(res => res.json())
-    .then(function(json)
-    {
-        create_popup(id, json.fields);
-    });
 }
 
-function create_popup(id, content) //rewrite because of possible xss injections
+function create_popup(id, content)
 {
     let popup = document.createElement('div');
 
-    popup.style = "position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center; visibility: hidden;";
+    popup.style = "position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;";
     popup.innerHTML = `
     <form style="background: #ffffff; padding: 20px; width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 20px; position: relative;">
         <span class="iconf-delete-2-1" style="position: absolute; top: 20px; right: 20px; color: red; cursor: pointer;"></span>
@@ -140,12 +134,24 @@ function create_textarea(content, content_div)
     content_div.appendChild(textarea);
 }
 
-function showPopup(id)
-{
-    if (evals.get(id).popup.style.visibility == "hidden")
-        evals.get(id).popup.style.visibility  = "visible";
+function showPopup(id)  //creates, hides or shows popup
+{   
+    if (evals.get(id).popup == undefined)
+    {
+        fetch(`${SERVER_IP}/feedback/${id}/info`)
+        .then(res => res.json())
+        .then(function(json)
+        {
+            create_popup(id, json.fields);
+        });
+    }
     else
-        evals.get(id).popup.style.visibility  = "hidden";
+    {
+        if (evals.get(id).popup.style.visibility == "hidden")
+            evals.get(id).popup.style.visibility  = "visible";
+        else
+            evals.get(id).popup.style.visibility  = "hidden";
+    }
 }
 
 function submitForm(id)
