@@ -50,11 +50,10 @@ async fn login(
         let redirect_url = query.redirect.as_ref().unwrap();
         session.insert("redirect_url", redirect_url)?;
     }
-    let header = (header::LOCATION, authorize_url.to_string());
     if query.no_redirect.unwrap_or(false) {
-        return Ok(HttpResponse::Ok().insert_header(header).finish());
+        return Ok(HttpResponse::Ok().body(authorize_url.to_string()));
     }
-    Ok(HttpResponse::Found().insert_header(header).finish())
+    Ok(HttpResponse::Found().insert_header((header::LOCATION, authorize_url.to_string())).finish())
 }
 
 #[derive(Deserialize)]
