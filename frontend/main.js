@@ -13,16 +13,30 @@ const evals = new Map();
 var hasChanged = false;
 var has_auth = false;
 
-browser.storage.local.get("cookie").then(result => {
-    console.log(result);
-});
-fetch(`${SERVER_IP}/ping`, {
-    credentials: "include"
-}).then(function (res)
-{
-    if (res.status == 200)
+browser.storage.local.get("cookie").then(result => { //might not be needed if I can check if the cookie is there in the background
+    if (result.cookie != null)
     {
-        has_auth = true;
+        browser.runtime.sendMessage({
+            url: "https://example.com",
+            name: "cookie_name",
+            value: "cookie_value" 
+        })
+    //     fetch(`${SERVER_IP}/ping`, {
+    //         method: "GET",
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json',
+    //             'Cache': 'no-cache'
+    //         },
+    //         credentials: 'include'
+    //     }).then(function (res)
+    //     {
+    //         console.log(res);
+    //         if (res.status == 200)
+    //         {
+    //             has_auth = true;
+    //         }
+    //     });
     }
 });
 
