@@ -12,13 +12,19 @@
   "permissions": [
     "https://dev01.playground.extension.42heilbronn.de/*",
 		"https://*.intra.42.fr/*",
-    "storage", "cookies"
+    "storage",
+    "cookies"
   ],
 
   "content_scripts": [
     {
       "matches": ["https://profile.intra.42.fr/*"],
       "js": ["main.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://dev01.playground.extension.42heilbronn.de/*"],
+      "js": ["test.js"],
       "run_at": "document_end"
     }
   ],

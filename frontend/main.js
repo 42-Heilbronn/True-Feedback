@@ -13,7 +13,9 @@ const evals = new Map();
 var hasChanged = false;
 var has_auth = false;
 
-console.log(document.cookie);
+browser.storage.local.get("cookie").then(result => {
+    console.log(result);
+});
 fetch(`${SERVER_IP}/ping`, {
     credentials: "include"
 }).then(function (res)
