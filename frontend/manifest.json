@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "True Feedback",
   "version": "0.1",
   "description": "",
@@ -9,16 +9,21 @@
     "96": "icons/96.png"
   },
 
-  "host_permissions": [
+  "permissions": [
     "https://dev01.playground.extension.42heilbronn.de/*",
-		"https://*.intra.42.fr/*"
-	],
+		"https://*.intra.42.fr/*",
+    "storage", "cookies"
+  ],
 
   "content_scripts": [
     {
-      "matches": ["https://*.intra.42.fr/*"],
-      "js": ["test.js"],
+      "matches": ["https://profile.intra.42.fr/*"],
+      "js": ["main.js"],
       "run_at": "document_end"
     }
-  ]
+  ],
+
+  "background": {
+    "scripts": ["playground.js"]
+  } 
 }

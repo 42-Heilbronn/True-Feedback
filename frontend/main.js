@@ -11,8 +11,18 @@ class EvalInfo
 const SERVER_IP = "https://dev01.playground.extension.42heilbronn.de/api";
 const evals = new Map();
 var hasChanged = false;
-// fetch(`${SERVER_IP}/ping`)
-// .then(res => console.log(res.ok));
+var has_auth = false;
+
+console.log(document.cookie);
+fetch(`${SERVER_IP}/ping`, {
+    credentials: "include"
+}).then(function (res)
+{
+    if (res.status == 200)
+    {
+        has_auth = true;
+    }
+});
 
 create();
 window.setInterval(create, 300000); //5 mins
@@ -44,7 +54,11 @@ function create_eval(id)
     <div class="project-item-text"></div>
     <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it. Why do they do that? Dunno
     eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
-    eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
+
+    if (has_auth == true)
+        eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
+    else
+        eval.lastElementChild.firstElementChild.href = `${SERVER_IP}/login`;
 
     eval_list.appendChild(eval);
     evals.get(id).eval_slot = eval;
