@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "True Feedback",
   "version": "0.1",
   "description": "",
@@ -9,7 +9,7 @@
     "96": "icons/96.png"
   },
 
-  "permissions": [
+  "host_permissions": [
     "https://dev01.playground.extension.42heilbronn.de/*",
 		"https://*.intra.42.fr/*"
   ],
