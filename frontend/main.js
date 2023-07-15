@@ -11,37 +11,13 @@ class EvalInfo
 const SERVER_IP = "https://dev01.playground.extension.42heilbronn.de/api";
 const evals = new Map();
 var hasChanged = false;
-var has_auth = false;
 
-browser.storage.local.get("cookie").then(result => { //might not be needed if I can check if the cookie is there in the background
-    if (result.cookie != null)
-    {
-        browser.runtime.sendMessage({
-            url: "https://example.com",
-            name: "cookie_name",
-            value: "cookie_value" 
-        })
-    //     fetch(`${SERVER_IP}/ping`, {
-    //         method: "GET",
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json',
-    //             'Cache': 'no-cache'
-    //         },
-    //         credentials: 'include'
-    //     }).then(function (res)
-    //     {
-    //         console.log(res);
-    //         if (res.status == 200)
-    //         {
-    //             has_auth = true;
-    //         }
-    //     });
-    }
-});
-
-create();
-window.setInterval(create, 300000); //5 mins
+browser.runtime.sendMessage({}).then(response => {
+    if (response != 200)
+        window.location.href = `${SERVER_IP}/login`;
+    create();
+    window.setInterval(create, 300000); //5 mins
+  });
 
 function create()
 {
@@ -70,11 +46,7 @@ function create_eval(id)
     <div class="project-item-text"></div>
     <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it. Why do they do that? Dunno
     eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
-
-    if (has_auth == true)
-        eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
-    else
-        eval.lastElementChild.firstElementChild.href = `${SERVER_IP}/login`;
+    eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
 
     eval_list.appendChild(eval);
     evals.get(id).eval_slot = eval;
