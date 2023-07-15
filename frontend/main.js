@@ -12,20 +12,17 @@ const SERVER_IP = "https://dev01.playground.extension.42heilbronn.de/api";
 const evals = new Map();
 var hasChanged = false;
 
-browser.runtime.sendMessage({}).then(response => {
-    if (response != 200)
+browser.runtime.sendMessage("auth").then(res => {
+    if (res != 200)
         window.location.href = `${SERVER_IP}/login`;
     create();
     window.setInterval(create, 300000); //5 mins
-  });
+});
 
 function create()
 {
-    fetch(`${SERVER_IP}/feedback/missing`)
-    .then(res => res.json())
-    .then(function(json)
-    {
-        json.forEach(element => {
+    browser.runtime.sendMessage("miss").then(res => {
+        res.forEach(element => {
             if (evals.has(element.id) == false)
             {
                 evals.set(element.id, new EvalInfo(element.evaluation));
@@ -137,16 +134,9 @@ function create_textarea(content, content_div)
 }
 
 function showPopup(id)  //creates, hides or shows popup
-{   
+{
     if (evals.get(id).popup == undefined)
-    {
-        fetch(`${SERVER_IP}/feedback/${id}/info`)
-        .then(res => res.json())
-        .then(function(json)
-        {
-            create_popup(id, json.fields);
-        });
-    }
+        browser.runtime.sendMessage({uri : `/feedback/${id}/info`}).then(res => create_popup(id, json.fields));
     else
     {
         if (evals.get(id).popup.style.visibility == "hidden")
@@ -170,15 +160,10 @@ function submitForm(id)
             data[element.id] = element.value;
     });
 
-    fetch(`${SERVER_IP}/feedback/${id}`, {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-        "Content-type": "application/json; charset=UTF-8"
-    }
+    browser.runtime.sendMessage({uri :`/feedback/${id}`, form: data}).then(function (res)
+    {
+        evals.get(id).eval_slot.remove();
+        evals.get(id).popup.remove();
+        evals.delete(id);
     });
-
-    evals.get(id).eval_slot.remove();
-    evals.get(id).popup.remove();
-    evals.delete(id);
 }

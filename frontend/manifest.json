@@ -28,6 +28,6 @@
   ],
 
   "background": {
-    "scripts": ["playground.js"]
+    "scripts": ["requests.js"]
   } 
 }
