@@ -31,13 +31,15 @@ pub async fn get_scale_team(
     client: web::Data<awc::Client>,
     auth_client: web::Data<oauth2::basic::BasicClient>,
 ) -> Result<ScaleTeam, SendRequestError> {
-    let team = client
+    let mut team = client
         .get(format!("https://api.intra.42.fr/v2/scale_teams/{id}"))
         .bearer_auth(get_staff_token(auth_client).await?.secret())
         .send()
-        .await?
+        .await?;
+    log::debug!("team: {:?}", team);
+    let team = team
         .json::<ScaleTeam>()
         .await
-        .unwrap();
+        .expect("team format");
     Ok(team)
 }
