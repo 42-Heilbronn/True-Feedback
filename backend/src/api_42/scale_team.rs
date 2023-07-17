@@ -31,7 +31,7 @@ pub struct ScaleTeam {
     pub correcteds: HiddenUsers,
     pub corrector: HiddenUser,
     pub filled_at: Option<chrono::DateTime<Utc>>,
-    pub team: Team,
+    pub team: Option<Team>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
