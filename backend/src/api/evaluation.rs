@@ -66,7 +66,7 @@ async fn add_evauation(
         evaluator_id: evaluation.user.id,
         begin_at: evaluation.begin_at.naive_utc(),
     };
-    let team = match get_scale_team(evaluation.team.id, client, auth_client).await {
+    let team = match get_scale_team(evaluation.id, client, auth_client).await {
         Ok(team) => team,
         Err(_) => return Err(ApiError::InternalServerError),
     };
