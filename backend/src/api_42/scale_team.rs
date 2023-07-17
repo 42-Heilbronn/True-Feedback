@@ -36,7 +36,7 @@ pub async fn get_scale_team(
         .bearer_auth(get_staff_token(auth_client).await?.secret())
         .send()
         .await?;
-    log::warn!("team: {:?}", team);
+    log::warn!("team: {:?}", team.body().await);
     let team = team
         .json::<ScaleTeam>()
         .await
