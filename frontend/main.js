@@ -136,7 +136,7 @@ function create_textarea(content, content_div)
 function showPopup(id)  //creates, hides or shows popup
 {
     if (evals.get(id).popup == undefined)
-        browser.runtime.sendMessage({uri : `/feedback/${id}/info`}).then(res => create_popup(id, json.fields));
+        browser.runtime.sendMessage({uri : `/feedback/${id}/info`}).then(res => create_popup(id, res.fields));
     else
     {
         if (evals.get(id).popup.style.visibility == "hidden")

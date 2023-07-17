@@ -6,7 +6,7 @@ browser.runtime.onMessage.addListener((request, sender) => {
     else if (request == "miss")
         return get_missing();
     else if (request.uri.endsWith("info"))
-        return get_details(request);
+        return get_details(request.uri);
     else if (request.uri.startsWith("/feedback"))
         return send_feedback(request.uri, request.form);
     console.log(request);
