@@ -63,7 +63,7 @@ impl Database {
         let feedback = evaluation_feedback::table
             .inner_join(evaluation::table)
             .filter(evaluation_feedback::user_id.eq(user_id))
-            .filter(evaluation_feedback::feedback.is_null())
+            // .filter(evaluation_feedback::feedback.is_null())
             .get_results(&mut self.pool.get().await?)
             .await?;
         Ok(feedback)

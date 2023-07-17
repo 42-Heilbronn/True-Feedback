@@ -74,6 +74,7 @@ async fn add_evauation(
     log::info!("added evaluation: {:?}", new_evaluation);
     let mut user_ids: Vec<i32> = team.correcteds.iter().map(|u| u.id).collect();
     user_ids.push(team.corrector.id);
+    log::info!("added evaluation_users: {:?}", user_ids);
     for user_id in user_ids {
         let new_feedback = NewEvaluationFeedback {
             evaluation_id: new_evaluation.id,
