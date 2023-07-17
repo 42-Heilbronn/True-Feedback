@@ -1,7 +1,7 @@
 use super::feedback_structure::{
     FeedbackEvaluator, FeedbackStructureField, FEEDBACK_EVALUATOR_FIELDS,
 };
-use crate::{api_42::scale_team::get_scale_team, db::Database};
+use crate::{api_42::scale_team::{get_scale_team, HiddenUser, HiddenUsers}, db::Database};
 use actix_identity::Identity;
 // use actix_identity::Identity;
 use actix_web::{web, HttpResponse};
@@ -93,17 +93,22 @@ async fn evaluation_feedback_info(
         Some(rem) => rem.1.to_owned(),
         None => scale_team.team.project_gitlab_path,
     };
-    let team_names = scale_team
-        .correcteds
-        .iter()
-        .map(|s| s.login.to_owned())
-        .collect();
+    let correcteds = match scale_team.correcteds {
+        HiddenUsers::Users(u) => u.iter().map(|s| s.login.to_owned()).collect(),
+        HiddenUsers::Invisible(_) => [].to_vec(),
+        HiddenUsers::None => [].to_vec()
+    };
+    let corrector = match scale_team.corrector {
+        HiddenUser::User(u) => u.login,
+        HiddenUser::Invisible(_) => "".to_string(),
+        HiddenUser::None => "".to_string()
+    };
     let evaluation_info = EvaluationInfo {
         team: scale_team.team.name,
-        project: project,
+        project,
         begin_at: scale_team.begin_at,
-        correcteds: team_names,
-        corrector: scale_team.corrector.login,
+        correcteds,
+        corrector,
     };
     let feedback_info = FeedbackInfo {
         id: *feedback_id,

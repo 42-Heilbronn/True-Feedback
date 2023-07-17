@@ -1,3 +1,5 @@
+use std::default;
+
 use super::token::get_staff_token;
 use actix_web::web;
 use awc::error::SendRequestError;
@@ -5,11 +7,29 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum HiddenUser {
+    Invisible(String),
+    User(User),
+    #[default]
+    None
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum HiddenUsers {
+    Invisible(String),
+    Users(Vec<User>),
+    #[default]
+    None
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScaleTeam {
     pub id: i32,
     pub begin_at: chrono::DateTime<Utc>,
-    pub correcteds: Vec<User>,
-    pub corrector: User,
+    pub correcteds: HiddenUsers,
+    pub corrector: HiddenUser,
     pub filled_at: Option<chrono::DateTime<Utc>>,
     pub team: Team,
 }
