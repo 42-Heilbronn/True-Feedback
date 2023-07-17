@@ -1,5 +1,5 @@
 use super::error::ApiError;
-use crate::api_42::scale_team::get_scale_team;
+use crate::api_42::team::get_team;
 use crate::db::model::{NewEvaluation, NewEvaluationFeedback};
 use crate::db::Database;
 use actix_web::HttpRequest;
@@ -66,15 +66,15 @@ async fn add_evauation(
         evaluator_id: evaluation.user.id,
         begin_at: evaluation.begin_at.naive_utc(),
     };
-    let team = match get_scale_team(evaluation.id, client, auth_client).await {
+    let team = match get_team(evaluation.team.id, client, auth_client).await {
         Ok(team) => team,
         Err(_) => return Err(ApiError::InternalServerError),
     };
     log::info!("team: {:?}", team);
     let new_evaluation = db.add_evaluation(new_evaluation).await?;
     log::info!("added evaluation: {:?}", new_evaluation);
-    let mut user_ids: Vec<i32> = team.correcteds.iter().map(|u| u.id).collect();
-    user_ids.push(team.corrector.id);
+    let mut user_ids: Vec<i32> = team.users.iter().map(|u| u.id).collect();
+    user_ids.push(new_evaluation.evaluator_id);
     log::info!("added evaluation_users: {:?}", user_ids);
     for user_id in user_ids {
         let new_feedback = NewEvaluationFeedback {

@@ -1,11 +1,12 @@
-use super::feedback_structure::{FeedbackEvaluator, FeedbackStructureField, FEEDBACK_EVALUATOR_FIELDS};
-use crate::{api_42::scale_team::get_scale_team};
-use crate::db::Database;
+use super::feedback_structure::{
+    FeedbackEvaluator, FeedbackStructureField, FEEDBACK_EVALUATOR_FIELDS,
+};
+use crate::{api_42::scale_team::get_scale_team, db::Database};
 use actix_identity::Identity;
 // use actix_identity::Identity;
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
-use serde::{Serialize};
+use serde::Serialize;
 
 use super::error::ApiError;
 
@@ -32,14 +33,13 @@ struct FeedbackListEvaluationEnrty {
     pub begin_at: chrono::NaiveDateTime,
 }
 
-async fn missing_feedback(
-    id: Identity,
-    db: web::Data<Database>,
-) -> Result<HttpResponse, ApiError> {
+async fn missing_feedback(id: Identity, db: web::Data<Database>) -> Result<HttpResponse, ApiError> {
     let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
     // let user_id = 139607;
     // log::warn!("DEBUG USER ID NO IDENTITY!");
-    let missing_feedback = db.get_missing_evaluation_feedbacks_from_user(user_id).await?;
+    let missing_feedback = db
+        .get_missing_evaluation_feedbacks_from_user(user_id)
+        .await?;
     let missing_feedback: Vec<FeedbackListEntry> = missing_feedback
         .into_iter()
         .map(|(feedback, evaluation)| FeedbackListEntry {
@@ -133,7 +133,7 @@ async fn post_feedback(
     if user_id.ne(&feedback.user_id) | feedback.feedback.is_some() {
         return Err(ApiError::Unauthorized);
     }
-    
+
     feedback.feedback = Some(serde_json::json!(feedback_post));
     db.update_evaluation_feedback(feedback).await?;
     Ok(HttpResponse::Ok().finish())

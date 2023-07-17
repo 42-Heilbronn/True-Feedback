@@ -5,13 +5,11 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScaleTeam {
+pub struct Team {
     pub id: i32,
-    pub begin_at: chrono::DateTime<Utc>,
-    pub correcteds: Vec<User>,
-    pub corrector: User,
-    pub filled_at: Option<chrono::DateTime<Utc>>,
-    pub team: Team,
+    pub name: String,
+    pub users: Vec<User>,
+    pub project_gitlab_path: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -20,24 +18,18 @@ pub struct User {
     pub login: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Team {
-    pub name: String,
-    pub project_gitlab_path: String,
-}
-
-pub async fn get_scale_team(
+pub async fn get_team(
     id: i32,
     client: web::Data<awc::Client>,
     auth_client: web::Data<oauth2::basic::BasicClient>,
-) -> Result<ScaleTeam, SendRequestError> {
-    let team = client
-        .get(format!("https://api.intra.42.fr/v2/scale_teams/{id}"))
+) -> Result<Team, SendRequestError> {
+    let team: Team = client
+        .get(format!("https://api.intra.42.fr/v2/teams/{id}"))
         .bearer_auth(get_staff_token(auth_client).await?.secret())
         .send()
         .await?
-        .json::<ScaleTeam>()
+        .json::<Team>()
         .await
-        .unwrap();
+        .expect("team format");
     Ok(team)
 }
