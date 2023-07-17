@@ -66,10 +66,11 @@ async fn add_evauation(
         evaluator_id: evaluation.user.id,
         begin_at: evaluation.begin_at.naive_utc(),
     };
-    let team = match get_scale_team(evaluation.id, client, auth_client).await {
+    let team = match get_scale_team(evaluation.team.id, client, auth_client).await {
         Ok(team) => team,
         Err(_) => return Err(ApiError::InternalServerError),
     };
+    log::info!("team: {:?}", team);
     let new_evaluation = db.add_evaluation(new_evaluation).await?;
     log::info!("added evaluation: {:?}", new_evaluation);
     let mut user_ids: Vec<i32> = team.correcteds.iter().map(|u| u.id).collect();
