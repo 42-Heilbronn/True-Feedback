@@ -38,6 +38,7 @@ function get_details(uri)
 
 function send_feedback(uri, data)
 {
+    console.log("in feedback!");
     return new Promise((resolve, reject) => {
         fetch(`${SERVER_IP}${uri}`, {
             method: "POST",
@@ -46,6 +47,6 @@ function send_feedback(uri, data)
                 "Content-type": "application/json; charset=UTF-8"
             }
         })
-        .then(res => resolve(res.json()));
+        .then(resolve(null)); //need to return a promise so the content_script knows when the background script is done
     });
 }
