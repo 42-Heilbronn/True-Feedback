@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "True Feedback",
+  "version": "1.0",
+  "description": "Private feedback for evaluations on intra.42.fr",
+
+  "icons": {
+    "48": "icons/48.png",
+    "96": "icons/96.png"
+  },
+
+  "host_permissions": [
+    "https://dev01.playground.extension.42heilbronn.de/*",
+		"https://*.intra.42.fr/*"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["https://profile.intra.42.fr/*"],
+      "js": ["main.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://dev01.playground.extension.42heilbronn.de/*"],
+      "js": ["redirect.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "background": {
+    "scripts": ["requests.js"]
+  } 
+}
