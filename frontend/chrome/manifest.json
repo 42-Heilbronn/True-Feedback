@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "True Feedback",
-  "version": "0.1",
-  "description": "",
+  "version": "1.0",
+  "description": "Private feedback for evaluations on intra.42.fr",
 
   "icons": {
     "48": "icons/48.png",

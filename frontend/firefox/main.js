@@ -2,16 +2,18 @@ class EvalInfo
 {
     constructor(peer)
     {
-        this.peer = peer;
-        this.eval_slot;
-        this.popup;
+        this.peer = peer; //peer object from get request
+        this.eval_slot; //the eval slot element created
+        this.popup; //the popup element created
     }
 }
 
 const SERVER_IP = "https://dev01.playground.extension.42heilbronn.de/api";
-const evals = new Map();
-var hasChanged = false;
+const evals = new Map(); //map that saves all EvalInfo objects
+var hasChanged = false; //checks if the sliders have been adjusted at least once
 
+//checks if the user has a cookie
+//if not it redirects him to /login
 browser.runtime.sendMessage("auth").then(res => {
     if (res != 200)
         window.location.href = `${SERVER_IP}/login`;
@@ -19,6 +21,7 @@ browser.runtime.sendMessage("auth").then(res => {
     window.setInterval(create, 300000); //5 mins
 });
 
+//creates an eval slot for every eval that hasn't got a feedback from the user yet
 function create()
 {
     browser.runtime.sendMessage("miss").then(res => {
@@ -41,7 +44,7 @@ function create_eval(id)
 
     eval.innerHTML = `
     <div class="project-item-text"></div>
-    <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it. Why do they do that? Dunno
+    <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it
     eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
     eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
 
@@ -49,6 +52,7 @@ function create_eval(id)
     evals.get(id).eval_slot = eval;
 }
 
+//iterates through the details for the eval and creates as many elements as needed
 function create_popup(id, content)
 {
     let popup = document.createElement('div');
@@ -133,7 +137,8 @@ function create_textarea(content, content_div)
     content_div.appendChild(textarea);
 }
 
-function showPopup(id)  //creates, hides or shows popup
+//creates, hides or shows popup
+function showPopup(id)
 {
     if (evals.get(id).popup == undefined)
         browser.runtime.sendMessage({uri : `/feedback/${id}/info`}).then(res => create_popup(id, res.fields));
@@ -146,6 +151,9 @@ function showPopup(id)  //creates, hides or shows popup
     }
 }
 
+//extracts and POSTs data to the server
+//slider values will be converted to integers
+//deletes all the elements afterwards
 function submitForm(id)
 {
     let data = {};

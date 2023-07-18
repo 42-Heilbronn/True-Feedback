@@ -1,5 +1,6 @@
 const SERVER_IP = "https://dev01.playground.extension.42heilbronn.de/api";
 
+//listens for a message from the content script and sends a request to the server depending on the message
 browser.runtime.onMessage.addListener((request, sender) => {
     if (request == "auth")
         return auth();
@@ -9,7 +10,6 @@ browser.runtime.onMessage.addListener((request, sender) => {
         return get_details(request.uri);
     else if (request.uri.startsWith("/feedback"))
         return send_feedback(request.uri, request.form);
-    console.log(request);
 });
 
 function auth()
@@ -38,7 +38,6 @@ function get_details(uri)
 
 function send_feedback(uri, data)
 {
-    console.log("in feedback!");
     return new Promise((resolve, reject) => {
         fetch(`${SERVER_IP}${uri}`, {
             method: "POST",
