@@ -73,7 +73,8 @@ async fn add_evauation(
     log::info!("team: {:?}", team);
     let new_evaluation = db.add_evaluation(new_evaluation).await?;
     log::info!("added evaluation: {:?}", new_evaluation);
-    let mut user_ids: Vec<i32> = team.users.iter().map(|u| u.id).collect();
+    // let mut user_ids: Vec<i32> = team.users.iter().map(|u| u.id).collect();
+    let mut user_ids: Vec<i32> = Vec::new();
     user_ids.push(new_evaluation.evaluator_id);
     log::info!("added evaluation_users: {:?}", user_ids);
     for user_id in user_ids {
