@@ -38,8 +38,6 @@ struct FeedbackListEvaluationEnrty {
 
 async fn missing_feedback(id: Identity, db: web::Data<Database>) -> Result<HttpResponse, ApiError> {
     let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
-    // let user_id = 139607;
-    // log::warn!("DEBUG USER ID NO IDENTITY!");
     let missing_feedback = db
         .get_missing_evaluation_feedbacks_from_user(user_id)
         .await?;
@@ -81,8 +79,6 @@ async fn evaluation_feedback_info(
     auth_client: web::Data<oauth2::basic::BasicClient>,
 ) -> Result<HttpResponse, ApiError> {
     let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
-    // let user_id = 139607;
-    // log::warn!("DEBUG USER ID NO IDENTITY!");
     let feedback = db.get_evaluation_feedback(*feedback_id).await?;
     if user_id.ne(&feedback.user_id) {
         return Err(ApiError::Unauthorized);
@@ -142,13 +138,10 @@ async fn post_feedback(
     feedback_post: web::Json<FeedbackEvaluator>,
 ) -> Result<HttpResponse, ApiError> {
     let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
-    // let user_id = 139607;
-    // log::warn!("DEBUG USER ID NO IDENTITY!");
     let mut feedback = db.get_evaluation_feedback(*feedback_id).await?;
     if user_id.ne(&feedback.user_id) | feedback.feedback.is_some() {
         return Err(ApiError::Unauthorized);
     }
-
     feedback.feedback = Some(serde_json::json!(feedback_post));
     db.update_evaluation_feedback(feedback).await?;
     Ok(HttpResponse::Ok().finish())

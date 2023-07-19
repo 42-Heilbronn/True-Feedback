@@ -14,8 +14,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
-    redirect: Option<String>,
-    no_redirect: Option<bool>,
+    redirect: Option<String>
 }
 
 async fn login(
@@ -49,9 +48,6 @@ async fn login(
     if query.redirect.is_some() {
         let redirect_url = query.redirect.as_ref().unwrap();
         session.insert("redirect_url", redirect_url)?;
-    }
-    if query.no_redirect.unwrap_or(false) {
-        return Ok(HttpResponse::Ok().body(authorize_url.to_string()));
     }
     Ok(HttpResponse::Found().insert_header((header::LOCATION, authorize_url.to_string())).finish())
 }

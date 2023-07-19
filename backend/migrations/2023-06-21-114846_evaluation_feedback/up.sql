@@ -9,4 +9,4 @@ CREATE TABLE evaluation_feedback (
 );
 
 -- SELECT diesel_manage_updated_at('evaluation');
-SELECT manage_feedback_at('evaluation');
+SELECT manage_feedback_at('evaluation_feedback');
