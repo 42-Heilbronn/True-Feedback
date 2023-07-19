@@ -1,6 +1,7 @@
 use crate::db::model::*;
 use crate::db::schema::*;
 use crate::db::Database;
+use chrono::Utc;
 use diesel::ExpressionMethods;
 use diesel::QueryDsl;
 use diesel::dsl::IntervalDsl;
@@ -64,7 +65,7 @@ impl Database {
     ) -> anyhow::Result<Vec<(EvaluationFeedback, Evaluation)>> {
         let feedback = evaluation_feedback::table
             .inner_join(evaluation::table)
-            .filter(evaluation::begin_at.le(diesel::dsl::now + 15.minutes()))
+            .filter(evaluation::begin_at.le(Utc::now().naive_utc() + chrono::Duration::minutes(15)))
             .filter(evaluation_feedback::user_id.eq(user_id))
             .filter(evaluation_feedback::feedback.is_null())
             .get_results(&mut self.pool.get().await?)
