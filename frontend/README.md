@@ -1,14 +1,14 @@
 <h1 align="center">👍True Feedback</center></h1>
 </br>
 <div align="center">
-  <img src="./frontend/firefox/icons/96.png">
+  <img src="./firefox/icons/96.png">
 </div>
 A browser extension which adds an anonymous, attuned feedback form to to 42's Intranet, allowing users to provide helpful feedback without revealing their identity.
 
 
 ## Installation
-[<img src="https://www.mozilla.org/media/img/structured-data/logo-firefox-browser.fbc7ffbb50fd.png" width="128" alt="Mozilla Firefox" title="Download for Mozilla Firefox">](https://github.com/FreekBes/improved_intra/releases/latest/download/firefox.xpi)
-[<img src="https://lh4.ggpht.com/x-plP9YZXhCaiDkTKQ5S29PwLmdi4feEKrMOtQle4NuoOaUgKUMH9pPWIg91da3anhSmw-G8erEIuU0d" width="128" alt="Google Chrome" title="Download for Google Chrome">](https://chrome.google.com/webstore/)
+[<img src="https://www.mozilla.org/media/img/structured-data/logo-firefox-browser.fbc7ffbb50fd.png" width="128" alt="Mozilla Firefox" title="Download for Mozilla Firefox">](https://github.com/42-Heilbronn/honest_feedback_mvp/releases/download/TrueFeedback/TrueFeedback1.0.xpi)
+[<img src="https://lh4.ggpht.com/x-plP9YZXhCaiDkTKQ5S29PwLmdi4feEKrMOtQle4NuoOaUgKUMH9pPWIg91da3anhSmw-G8erEIuU0d" width="128" alt="Google Chrome" title="Download for Google Chrome">](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 ### For Firefox
 - Click the Firefox logo
 - Click "Add to Firefox"
