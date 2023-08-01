@@ -1,5 +1,6 @@
 use super::error::ApiError;
 use crate::api_42::team::get_team;
+use crate::db::enums::FeedbackKind;
 use crate::db::model::{NewEvaluation, NewEvaluationFeedback};
 use crate::db::Database;
 use actix_web::HttpRequest;
@@ -73,16 +74,23 @@ async fn add_evauation(
     log::info!("team: {:?}", team);
     let new_evaluation = db.add_evaluation(new_evaluation).await?;
     log::info!("added evaluation: {:?}", new_evaluation);
-    // let mut user_ids: Vec<i32> = team.users.iter().map(|u| u.id).collect();
-    let mut user_ids: Vec<i32> = Vec::new();
-    user_ids.push(new_evaluation.evaluator_id);
-    log::info!("added evaluation_users: {:?}", user_ids);
-    for user_id in user_ids {
+
+    for user_id in team.users.iter().map(|u| u.id) {
         let new_feedback = NewEvaluationFeedback {
             evaluation_id: new_evaluation.id,
-            user_id: user_id,
+            user_id,
+            kind: FeedbackKind::Evaluated
         };
-        log::debug!("added evaluation feedback: {:?}", new_feedback);
+        log::debug!("added evaluation feedback for evaluated: {:?}", new_feedback);
+        db.add_evaluation_feedback(new_feedback).await?;
+    }
+    {
+        let new_feedback = NewEvaluationFeedback {
+            evaluation_id: new_evaluation.id,
+            user_id: new_evaluation.evaluator_id,
+            kind: FeedbackKind::Evaluator,
+        };
+        log::debug!("added evaluation feedback for evaluator: {:?}", new_feedback);
         db.add_evaluation_feedback(new_feedback).await?;
     }
     return Ok(HttpResponse::Ok().finish());

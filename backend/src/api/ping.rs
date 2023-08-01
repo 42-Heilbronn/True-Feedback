@@ -8,7 +8,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 }
 
 async fn ping(
-    id: Identity,
+    _: Identity,
 ) -> Result<HttpResponse, ApiError> {
     Ok(HttpResponse::Ok().finish())
 }

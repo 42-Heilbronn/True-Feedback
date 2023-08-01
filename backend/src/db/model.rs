@@ -4,6 +4,8 @@ use diesel::{prelude::*};
 use serde::{Serialize, Deserialize};
 use serde_json::Value;
 
+use super::enums::FeedbackKind;
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Queryable, Selectable, AsChangeset, Identifiable)]
 #[diesel(table_name = evaluation)]
 pub struct Evaluation {
@@ -32,6 +34,8 @@ pub struct EvaluationFeedback {
     pub id: i32,
     pub evaluation_id: i32,
     pub user_id: i32,
+    pub kind: FeedbackKind,
+    pub feedback_id: Option<i32>,
     pub feedback: Option<Value>,
     pub feedback_at: Option<NaiveDateTime>,
     pub created_at: NaiveDateTime
@@ -41,5 +45,6 @@ pub struct EvaluationFeedback {
 #[diesel(table_name = evaluation_feedback)]
 pub struct NewEvaluationFeedback {
     pub evaluation_id: i32,
+    pub kind: FeedbackKind,
     pub user_id: i32,
 }

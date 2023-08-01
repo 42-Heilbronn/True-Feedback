@@ -1,5 +1,3 @@
-use std::default;
-
 use super::token::get_staff_token;
 use actix_web::web;
 use awc::error::SendRequestError;
@@ -12,7 +10,7 @@ pub enum HiddenUser {
     Invisible(String),
     User(User),
     #[default]
-    None
+    None,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -21,7 +19,7 @@ pub enum HiddenUsers {
     Invisible(String),
     Users(Vec<User>),
     #[default]
-    None
+    None,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]

@@ -25,7 +25,6 @@ async fn login(
 ) -> Result<HttpResponse, ApiError> {
     log::debug!("login attempt");
 
-    // If user is already logged in redirect to root
     if let Some(id) = id {
         log::debug!("user {:?} already logged in", id.id());
         return Ok(HttpResponse::Found()
@@ -66,7 +65,7 @@ async fn ft_callback(
     params: web::Query<AuthRequest>,
 ) -> Result<HttpResponse, ApiError> {
     let redirect_url = session.get::<String>("redirect_url")?;
-    // If user is already logged in redirect to frontend
+
     if id.is_some() {
         log::debug!("callback user {:?} already logged in", id.unwrap().id());
         return Ok(HttpResponse::Found()

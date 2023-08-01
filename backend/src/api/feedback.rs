@@ -1,9 +1,10 @@
 use super::feedback_structure::{
-    FeedbackEvaluator, FeedbackStructureField, FEEDBACK_EVALUATOR_FIELDS,
+    Feedback, FeedbackStructureField, FEEDBACK_EVALUATED_FIELDS,
+    FEEDBACK_EVALUATOR_FIELDS,
 };
 use crate::{
     api_42::scale_team::{get_scale_team, HiddenUser, HiddenUsers},
-    db::Database,
+    db::{enums::FeedbackKind, Database},
 };
 use actix_identity::Identity;
 // use actix_identity::Identity;
@@ -116,10 +117,14 @@ async fn evaluation_feedback_info(
         correcteds,
         corrector,
     };
+    let fields = match feedback.kind {
+        FeedbackKind::Evaluator => FEEDBACK_EVALUATOR_FIELDS.to_vec(),
+        FeedbackKind::Evaluated => FEEDBACK_EVALUATED_FIELDS.to_vec(),
+    };
     let feedback_info = FeedbackInfo {
         id: *feedback_id,
         evaluation: evaluation_info,
-        fields: FEEDBACK_EVALUATOR_FIELDS.to_vec(),
+        fields,
     };
     return Ok(HttpResponse::Ok().json(feedback_info));
 }
@@ -135,13 +140,17 @@ async fn post_feedback(
     id: Identity,
     db: web::Data<Database>,
     feedback_id: web::Path<i32>,
-    feedback_post: web::Json<FeedbackEvaluator>,
+    feedback_post: web::Json<Feedback>,
 ) -> Result<HttpResponse, ApiError> {
     let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
     let mut feedback = db.get_evaluation_feedback(*feedback_id).await?;
     if user_id.ne(&feedback.user_id) | feedback.feedback.is_some() {
         return Err(ApiError::Unauthorized);
     }
+    if !feedback_post.is_kind(feedback.kind) {
+        return Err(ApiError::BadRequest("wrong feedback kind".to_owned()));
+    }
+    feedback.feedback_id = Some(feedback_post.current_id());
     feedback.feedback = Some(serde_json::json!(feedback_post));
     db.update_evaluation_feedback(feedback).await?;
     Ok(HttpResponse::Ok().finish())

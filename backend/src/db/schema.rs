@@ -1,5 +1,11 @@
 // @generated automatically by Diesel CLI.
 
+pub mod sql_types {
+    #[derive(diesel::query_builder::QueryId, diesel::sql_types::SqlType)]
+    #[diesel(postgres_type(name = "feedback_kind"))]
+    pub struct FeedbackKind;
+}
+
 diesel::table! {
     evaluation (id) {
         id -> Int4,
@@ -13,10 +19,15 @@ diesel::table! {
 }
 
 diesel::table! {
+    use diesel::sql_types::*;
+    use super::sql_types::FeedbackKind;
+
     evaluation_feedback (id) {
         id -> Int4,
         evaluation_id -> Int4,
         user_id -> Int4,
+        kind -> FeedbackKind,
+        feedback_id -> Nullable<Int4>,
         feedback -> Nullable<Jsonb>,
         feedback_at -> Nullable<Timestamp>,
         created_at -> Timestamp,
@@ -28,6 +39,7 @@ diesel::table! {
         id -> Int4,
         event_user_id -> Int4,
         user_id -> Int4,
+        feedback_type -> Int4,
         feedback -> Nullable<Jsonb>,
         feedback_at -> Nullable<Timestamp>,
         created_at -> Timestamp,
