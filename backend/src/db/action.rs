@@ -2,7 +2,6 @@ use crate::db::model::*;
 use crate::db::schema::*;
 use crate::db::Database;
 use chrono::Utc;
-use diesel::dsl::IntervalDsl;
 use diesel::ExpressionMethods;
 use diesel::QueryDsl;
 use diesel_async::RunQueryDsl;
