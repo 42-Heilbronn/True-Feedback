@@ -1,6 +1,5 @@
 use super::feedback_structure::{
-    Feedback, FeedbackStructureField, FEEDBACK_EVALUATED_FIELDS,
-    FEEDBACK_EVALUATOR_FIELDS,
+    Feedback, FeedbackStructureField, FEEDBACK_EVALUATED_FIELDS, FEEDBACK_EVALUATOR_FIELDS,
 };
 use crate::{
     api_42::scale_team::{get_scale_team, HiddenUser, HiddenUsers},

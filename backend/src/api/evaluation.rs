@@ -79,9 +79,12 @@ async fn add_evauation(
         let new_feedback = NewEvaluationFeedback {
             evaluation_id: new_evaluation.id,
             user_id,
-            kind: FeedbackKind::Evaluated
+            kind: FeedbackKind::Evaluated,
         };
-        log::debug!("added evaluation feedback for evaluated: {:?}", new_feedback);
+        log::debug!(
+            "added evaluation feedback for evaluated: {:?}",
+            new_feedback
+        );
         db.add_evaluation_feedback(new_feedback).await?;
     }
     {
@@ -90,7 +93,10 @@ async fn add_evauation(
             user_id: new_evaluation.evaluator_id,
             kind: FeedbackKind::Evaluator,
         };
-        log::debug!("added evaluation feedback for evaluator: {:?}", new_feedback);
+        log::debug!(
+            "added evaluation feedback for evaluator: {:?}",
+            new_feedback
+        );
         db.add_evaluation_feedback(new_feedback).await?;
     }
     return Ok(HttpResponse::Ok().finish());

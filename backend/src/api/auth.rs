@@ -14,7 +14,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
-    redirect: Option<String>
+    redirect: Option<String>,
 }
 
 async fn login(
@@ -48,7 +48,9 @@ async fn login(
         let redirect_url = query.redirect.as_ref().unwrap();
         session.insert("redirect_url", redirect_url)?;
     }
-    Ok(HttpResponse::Found().insert_header((header::LOCATION, authorize_url.to_string())).finish())
+    Ok(HttpResponse::Found()
+        .insert_header((header::LOCATION, authorize_url.to_string()))
+        .finish())
 }
 
 #[derive(Deserialize)]
@@ -127,10 +129,11 @@ async fn ft_callback(
         .get("https://api.intra.42.fr/v2/me")
         .bearer_auth(token.access_token().secret())
         .send()
-        .await else {
-            log::error!("Failed to get user info from 42 Intra");
-            return Err(ApiError::InternalServerError);
-        };
+        .await
+    else {
+        log::error!("Failed to get user info from 42 Intra");
+        return Err(ApiError::InternalServerError);
+    };
 
     // Parse the response from 42 Intra
     let Ok(data) = res.json::<serde_json::Value>().await else {

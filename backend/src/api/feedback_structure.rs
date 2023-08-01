@@ -29,7 +29,7 @@ pub enum FeedbackStructureFieldType {
 #[serde(untagged)]
 pub enum Feedback {
     FeedbackEvaluator(FeedbackEvaluator),
-    FeedbackEvaluated(FeedbackEvaluated)
+    FeedbackEvaluated(FeedbackEvaluated),
 }
 
 impl Feedback {
@@ -69,19 +69,22 @@ pub static FEEDBACK_EVALUATOR_FIELDS: [FeedbackStructureField; 4] = [
     FeedbackStructureField {
         key: "understanding",
         name: "The code was thoroughly understood",
-        description: "Any Questions regarding the overall structure, design choices and individual functions could be answered flawlessly.",
+        description: "Any Questions regarding the overall structure, design choices \
+                        and individual functions could be answered flawlessly.",
         data_type: FeedbackStructureFieldType::Range(0, 10),
     },
     FeedbackStructureField {
         key: "uniqueness",
         name: "The solution was unique",
-        description: "The solution provided a fresh perspective or approach that set it apart from conventional methods or existing alternatives?",
+        description: "The solution provided a fresh perspective or approach that \
+                        set it apart from conventional methods or existing alternatives?",
         data_type: FeedbackStructureFieldType::Range(0, 10),
     },
     FeedbackStructureField {
         key: "friendliness",
         name: "The evaluation was very pleasant",
-        description: "The atmosphere throughout the entire process was very friendly. There was no discomfort and no uneasiness.",
+        description: "The atmosphere throughout the entire process was very friendly. \
+                        There was no discomfort and no uneasiness.",
         data_type: FeedbackStructureFieldType::Range(0, 10),
     },
     FeedbackStructureField {
@@ -89,7 +92,7 @@ pub static FEEDBACK_EVALUATOR_FIELDS: [FeedbackStructureField; 4] = [
         name: "Comment",
         description: "Optional comment you would like to share with bocal",
         data_type: FeedbackStructureFieldType::String(1024),
-    }
+    },
 ];
 
 // EVALUATED
@@ -111,13 +114,16 @@ pub static FEEDBACK_EVALUATED_FIELDS: [FeedbackStructureField; 3] = [
     FeedbackStructureField {
         key: "rigorness",
         name: "The code was rigorously examined",
-        description: "Every aspect of the code, from logic and functionality to performance and security, was subjected to thorough and meticulous scrutiny to ensure a robust and reliable solution.",
+        description: "Every aspect of the code, from logic and functionality \
+                        to performance and security, was subjected to thorough and meticulous \
+                        scrutiny to ensure a robust and reliable solution.",
         data_type: FeedbackStructureFieldType::Range(0, 10),
     },
     FeedbackStructureField {
         key: "friendliness",
         name: "The evaluation was very pleasant",
-        description: "The atmosphere throughout the entire process was very friendly. There was no discomfort and no uneasiness.",
+        description: "The atmosphere throughout the entire process was very friendly. \
+                        There was no discomfort and no uneasiness.",
         data_type: FeedbackStructureFieldType::Range(0, 10),
     },
     FeedbackStructureField {
@@ -125,5 +131,5 @@ pub static FEEDBACK_EVALUATED_FIELDS: [FeedbackStructureField; 3] = [
         name: "Comment",
         description: "Optional comment you would like to share with bocal",
         data_type: FeedbackStructureFieldType::String(1024),
-    }
+    },
 ];
