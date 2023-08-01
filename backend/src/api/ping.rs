@@ -7,10 +7,6 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(web::resource("/ping").route(web::get().to(ping)));
 }
 
-async fn ping(
-    id: Identity,
-) -> Result<HttpResponse, ApiError> {
+async fn ping(_: Identity) -> Result<HttpResponse, ApiError> {
     Ok(HttpResponse::Ok().finish())
 }
-
-

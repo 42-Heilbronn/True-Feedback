@@ -4,7 +4,6 @@ use crate::db::Database;
 use chrono::Utc;
 use diesel::ExpressionMethods;
 use diesel::QueryDsl;
-use diesel::dsl::IntervalDsl;
 use diesel_async::RunQueryDsl;
 
 impl Database {

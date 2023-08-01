@@ -1,9 +1,9 @@
-use diesel::{ConnectionResult, ConnectionError};
+use diesel::{ConnectionError, ConnectionResult};
 use diesel_async::pooled_connection::PoolError;
 use diesel_async::pooled_connection::{bb8::Pool, AsyncDieselConnectionManager};
 use diesel_async::AsyncPgConnection;
-use futures_util::FutureExt;
 use futures_util::future::BoxFuture;
+use futures_util::FutureExt;
 
 #[derive(Clone)]
 pub struct Database {
@@ -41,7 +41,10 @@ fn root_certs() -> rustls::RootCertStore {
 
 impl Database {
     pub async fn new(database_url: &str) -> Result<Self, PoolError> {
-        let config = AsyncDieselConnectionManager::<AsyncPgConnection>::new_with_setup(database_url, establish_connection);
+        let config = AsyncDieselConnectionManager::<AsyncPgConnection>::new_with_setup(
+            database_url,
+            establish_connection,
+        );
         let pool = Pool::builder().build(config).await?;
         Ok(Database { pool })
     }

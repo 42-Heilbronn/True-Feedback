@@ -1,4 +1,3 @@
-// #![allow(dead_code)]
 mod api;
 mod api_42;
 mod db;
@@ -83,7 +82,7 @@ async fn main() -> Result<(), std::io::Error> {
                     .configure(api::auth::init)
                     .configure(api::feedback::init)
                     .configure(api::evaluation::init)
-                    .configure(api::ping::init), // .configure(api::typeform::init),
+                    .configure(api::ping::init),
             )
     })
     .bind(("0.0.0.0", port))

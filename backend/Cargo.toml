@@ -17,6 +17,7 @@ chrono = "0.4.26"
 derive_more = "0.99.17"
 diesel = { version = "2.1.0", features = ["postgres", "chrono", "serde_json"] }
 diesel-async = { version = "0.3.1", features = ["postgres", "bb8"] }
+diesel-derive-enum = { version = "2.1.0", features = ["postgres"] }
 diesel_migrations = "2.1.0"
 dotenvy = "0.15.7"
 env_logger = "0.10.0"
