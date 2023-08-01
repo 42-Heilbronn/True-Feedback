@@ -1,8 +1,10 @@
 use crate::db::model::*;
 use crate::db::schema::*;
 use crate::db::Database;
+use chrono::Utc;
 use diesel::ExpressionMethods;
 use diesel::QueryDsl;
+use diesel::dsl::IntervalDsl;
 use diesel_async::RunQueryDsl;
 
 impl Database {
@@ -51,6 +53,7 @@ impl Database {
         feedback: EvaluationFeedback,
     ) -> anyhow::Result<EvaluationFeedback> {
         Ok(diesel::update(evaluation_feedback::table)
+            .filter(evaluation_feedback::id.eq(feedback.id))
             .set(feedback)
             .get_result(&mut self.pool.get().await?)
             .await?)
@@ -62,7 +65,9 @@ impl Database {
     ) -> anyhow::Result<Vec<(EvaluationFeedback, Evaluation)>> {
         let feedback = evaluation_feedback::table
             .inner_join(evaluation::table)
+            .filter(evaluation::begin_at.le(Utc::now().naive_utc() + chrono::Duration::minutes(15)))
             .filter(evaluation_feedback::user_id.eq(user_id))
+            .filter(evaluation_feedback::feedback.is_null())
             .get_results(&mut self.pool.get().await?)
             .await?;
         Ok(feedback)

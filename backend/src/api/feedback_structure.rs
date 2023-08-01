@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 use validator::{Validate};
 
 #[derive(Deserialize, Serialize, Validate)]
-pub struct Feedback {
+pub struct FeedbackEvaluator {
     #[validate(range(min = 0, max = 10))]
     pub understanding: i32,
     #[validate(range(min = 0, max = 10))]
@@ -35,7 +35,7 @@ pub enum FeedbackStructureFieldType {
     String(i32),
 }
 
-pub static FEEDBACK_FIELDS_EVALUATION: [FeedbackStructureField; 4] = [
+pub static FEEDBACK_EVALUATOR_FIELDS: [FeedbackStructureField; 4] = [
     FeedbackStructureField {
         key: "understanding",
         name: "The code was thoroughly understood",

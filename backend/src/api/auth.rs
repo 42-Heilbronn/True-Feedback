@@ -14,7 +14,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
-    redirect: Option<String>,
+    redirect: Option<String>
 }
 
 async fn login(
@@ -49,10 +49,7 @@ async fn login(
         let redirect_url = query.redirect.as_ref().unwrap();
         session.insert("redirect_url", redirect_url)?;
     }
-
-    Ok(HttpResponse::Found()
-        .insert_header((header::LOCATION, authorize_url.to_string()))
-        .finish())
+    Ok(HttpResponse::Found().insert_header((header::LOCATION, authorize_url.to_string())).finish())
 }
 
 #[derive(Deserialize)]
