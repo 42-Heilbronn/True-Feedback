@@ -1,16 +1,20 @@
 # Endpoints
 
-## GET /auth/login
+## GET /login
 
 Redirects to api.42
 
-## POST /auth/callback
+## POST /callback
 
 Parameters: code, state
 
 Callback url
 
 ---
+
+## GET /ping
+
+Check if session is ok
 
 ## POST /evaluation
 
