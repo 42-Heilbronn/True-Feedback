@@ -54,8 +54,8 @@ async fn add_evauation(
         .headers()
         .get("x-secret")
         .ok_or(ApiError::Unauthorized)?;
-    if std::env::var("WEBHOOK_SECRET")
-        .expect("WEBHOOK_SECRET")
+    if std::env::var("WEBHOOK_SECRET_CREATE")
+        .expect("WEBHOOK_SECRET_CREATE")
         .ne(secret)
     {
         return Err(ApiError::Unauthorized);
@@ -111,8 +111,8 @@ async fn delete_evauation(
         .headers()
         .get("x-secret")
         .ok_or(ApiError::Unauthorized)?;
-    if std::env::var("WEBHOOK_SECRET")
-        .expect("WEBHOOK_SECRET")
+    if std::env::var("WEBHOOK_SECRET_DELETE")
+        .expect("WEBHOOK_SECRET_DELETE")
         .ne(secret)
     {
         return Err(ApiError::Unauthorized);
