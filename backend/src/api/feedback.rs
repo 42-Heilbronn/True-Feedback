@@ -41,6 +41,7 @@ async fn missing_feedback(id: Identity, db: web::Data<Database>) -> Result<HttpR
     let missing_feedback = db
         .get_missing_evaluation_feedbacks_from_user(user_id)
         .await?;
+    log::debug!("for user: {}, found feedbacks {:?}", user_id, missing_feedback);
     let missing_feedback: Vec<FeedbackListEntry> = missing_feedback
         .into_iter()
         .map(|(feedback, evaluation)| FeedbackListEntry {
