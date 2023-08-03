@@ -8,7 +8,7 @@ A browser extension which adds an anonymous, attuned feedback form to to 42's In
 
 ## Installation
 [<img src="https://www.mozilla.org/media/img/structured-data/logo-firefox-browser.fbc7ffbb50fd.png" width="128" alt="Mozilla Firefox" title="Download for Mozilla Firefox">](https://github.com/42-Heilbronn/honest_feedback_mvp/releases/download/TrueFeedback/TrueFeedback1.0.xpi)
-[<img src="https://lh4.ggpht.com/x-plP9YZXhCaiDkTKQ5S29PwLmdi4feEKrMOtQle4NuoOaUgKUMH9pPWIg91da3anhSmw-G8erEIuU0d" width="128" alt="Google Chrome" title="Download for Google Chrome">](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+[<img src="https://lh4.ggpht.com/x-plP9YZXhCaiDkTKQ5S29PwLmdi4feEKrMOtQle4NuoOaUgKUMH9pPWIg91da3anhSmw-G8erEIuU0d" width="128" alt="Google Chrome" title="Download for Google Chrome">](https://github.com/42-Heilbronn/honest_feedback_mvp/releases/download/TrueFeedback/TrueFeedback1.0.crx)
 ### For Firefox
 - Click the Firefox logo
 - Click "Add to Firefox"
