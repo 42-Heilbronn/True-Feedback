@@ -44,10 +44,8 @@ async fn main() -> Result<(), std::io::Error> {
         let auth_client = new_auth_client();
         let client = awc::Client::default();
         let cors = Cors::default()
-            .allow_any_origin()
-            // .allowed_origin(&std::env::var("FRONTEND_URL").expect("env not set: FRONTEND_URL"))
-            // .allowed_origin("https://profile.intra.42.fr")
-            // .allowed_origin("https://api.intra.42.fr")
+            .allowed_origin(&std::env::var("FRONTEND_URL").expect("env not set: FRONTEND_URL"))
+            .allowed_origin("https://profile.intra.42.fr")
             .supports_credentials()
             .allow_any_header()
             .allow_any_method()
