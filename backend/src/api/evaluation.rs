@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/evaluation")
-            .service(web::resource("/").route(web::post().to(add_evauation)))
-            .service(web::resource("/delete").route(web::post().to(delete_evauation))),
+            .service(web::resource("/").route(web::post().to(update_callback)))
     );
 }
 
@@ -21,6 +20,7 @@ pub struct ScaleTeam {
     pub id: i32,
     pub team: Team,
     pub begin_at: chrono::DateTime<Utc>,
+    pub final_mark: Option<i32>,
     pub project: Project,
     pub user: User,
 }
@@ -43,7 +43,7 @@ pub struct User {
     pub login: String,
 }
 
-async fn add_evauation(
+async fn update_callback(
     db: web::Data<Database>,
     evaluation: web::Json<ScaleTeam>,
     client: web::Data<awc::Client>,
@@ -54,11 +54,19 @@ async fn add_evauation(
         .headers()
         .get("x-secret")
         .ok_or(ApiError::Unauthorized)?;
-    if std::env::var("WEBHOOK_SECRET_CREATE")
-        .expect("WEBHOOK_SECRET_CREATE")
+    if std::env::var("WEBHOOK_SECRET_UPDATE")
+        .expect("WEBHOOK_SECRET_UPDATE")
         .ne(secret)
     {
         return Err(ApiError::Unauthorized);
+    }
+    if evaluation.final_mark.is_none() {
+        log::debug!("evaluation not finished");
+        return Ok(HttpResponse::Ok().finish());
+    }
+    if db.get_evaluation(evaluation.id).await.is_ok() {
+        log::debug!("evaluation already added");
+        return Ok(HttpResponse::Ok().finish());
     }
     let new_evaluation = NewEvaluation {
         scale_team_id: evaluation.id,
@@ -99,25 +107,5 @@ async fn add_evauation(
         );
         db.add_evaluation_feedback(new_feedback).await?;
     }
-    return Ok(HttpResponse::Ok().finish());
-}
-
-async fn delete_evauation(
-    db: web::Data<Database>,
-    evaluation: web::Json<ScaleTeam>,
-    req: HttpRequest,
-) -> Result<HttpResponse, ApiError> {
-    let secret = req
-        .headers()
-        .get("x-secret")
-        .ok_or(ApiError::Unauthorized)?;
-    if std::env::var("WEBHOOK_SECRET_DELETE")
-        .expect("WEBHOOK_SECRET_DELETE")
-        .ne(secret)
-    {
-        return Err(ApiError::Unauthorized);
-    }
-    log::info!("evaluation removed: {:?}", evaluation);
-    db.delete_evaluation(evaluation.id).await?;
     return Ok(HttpResponse::Ok().finish());
 }
