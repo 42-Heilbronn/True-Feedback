@@ -22,7 +22,7 @@ pub struct ScaleTeam {
     pub begin_at: chrono::DateTime<Utc>,
     pub final_mark: Option<i32>,
     pub project: Project,
-    pub user: User,
+    pub user: Option<User>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -60,7 +60,7 @@ async fn update_callback(
     {
         return Err(ApiError::Unauthorized);
     }
-    if evaluation.final_mark.is_none() {
+    if evaluation.final_mark.is_none() | evaluation.user.is_none() {
         log::debug!("evaluation not finished");
         return Ok(HttpResponse::Ok().finish());
     }
@@ -72,7 +72,7 @@ async fn update_callback(
         scale_team_id: evaluation.id,
         team: evaluation.team.name.to_owned(),
         project: evaluation.project.name.to_owned(),
-        evaluator_id: evaluation.user.id,
+        evaluator_id: evaluation.user.clone().unwrap().id,
         begin_at: evaluation.begin_at.naive_utc(),
     };
     let team = match get_team(evaluation.team.id, client, auth_client).await {
