@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/evaluation")
-            .service(web::resource("/").route(web::post().to(update_callback)))
+            .service(web::resource("").route(web::post().to(update_callback)))
     );
 }
 
