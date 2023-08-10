@@ -1,6 +1,5 @@
-# honest_feedback_mvp
+# True Intra Feedback MVP
 
-https://docs.google.com/document/d/1QAL8O9g9TyRsxf3JzhBRjcEU2nPW5cRiwMYZ8uuaXU0/edit
 
 Feedback Addon for intra.42.fr to get honest feedback from students about evaluation
 
