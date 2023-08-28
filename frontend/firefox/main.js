@@ -45,7 +45,7 @@ function create_eval(id)
     eval.innerHTML = `
     <div class="project-item-text"></div>
     <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it
-    eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project} by ${evals.get(id).peer.evaluation.corrector}`;
+    eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
     eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
 
     eval_list.appendChild(eval);
@@ -66,7 +66,7 @@ function create_popup(id, content)
         <span class="btn btn-primary" style="margin: 0 auto; border-radius: 5px; font-size: 17px; padding: 6px 18px;">Submit</span>
     </form>`;
 
-    popup.firstElementChild.firstElementChild.nextElementSibling.innerText = `🔊 Feedback for ${evals.get(id).peer.team} by ${evals.get(id).peer.evaluation.corrector}🔊`;
+    popup.firstElementChild.firstElementChild.nextElementSibling.innerText = `🔊 Feedback for ${evals.get(id).peer.team} 🔊`;
 
     content.forEach(element => {
         if (element.data_type.Range != null)
