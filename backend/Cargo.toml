@@ -1,7 +1,9 @@
 [package]
-name = "backend"
+name = "true_feedback"
 version = "0.1.0"
 edition = "2021"
+authors = ["Patrick Fuchs <patrick@42heilbronn.de>"]
+license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -17,11 +19,18 @@ chrono = "0.4.26"
 derive_more = "0.99.17"
 diesel = { version = "2.1.0", features = ["postgres", "chrono", "serde_json"] }
 diesel-async = { version = "0.3.1", features = ["postgres", "bb8"] }
+diesel-derive-enum = { version = "2.1.0", features = ["postgres"] }
 diesel_migrations = "2.1.0"
 dotenvy = "0.15.7"
 env_logger = "0.10.0"
+futures-util = "0.3.28"
 log = "0.4.19"
 oauth2 = "4.4.1"
+rustls = "0.21.2"
+rustls-native-certs = "0.6.3"
 serde = "1.0.164"
 serde_json = "1.0.97"
+tokio = "1.29.1"
+tokio-postgres = "0.7.8"
+tokio-postgres-rustls = "0.10.0"
 validator = { version = "0.16.1", features = ["derive"] }
