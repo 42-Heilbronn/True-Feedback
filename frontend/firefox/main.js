@@ -10,6 +10,7 @@ class EvalInfo
 
 const SERVER_IP = "https://dev01.playground.extension.42heilbronn.de/api";
 const evals = new Map(); //map that saves all EvalInfo objects
+const intra_name = document.querySelector("[data-login]").innerText;
 var hasChanged = false; //checks if the sliders have been adjusted at least once
 
 //checks if the user has a cookie
@@ -37,23 +38,31 @@ function create()
 
 function create_eval(id)
 {
-    let eval_list = document.getElementById("collapseEvaluations");
-    let eval = document.createElement("div");
+    browser.runtime.sendMessage({uri : `/feedback/${id}/info`}).then(res => {
+        let eval_list = document.getElementById("collapseEvaluations");
+        let eval = document.createElement("div");
+        let peer_name;
+        if (res.evaluation.corrector == intra_name)
+            peer_name = `${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
+        else
+            peer_name = res.evaluation.corrector;
 
-    eval.classList.add("project-item", "reminder", "event");
+        eval.classList.add("project-item", "reminder", "event");
 
-    eval.innerHTML = `
-    <div class="project-item-text"></div>
-    <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it
-    eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${evals.get(id).peer.team}'s ${evals.get(id).peer.project}`;
-    eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
+        eval.innerHTML = `
+        <div class="project-item-text"></div>
+        <div class="project-item-actions"><a href="#">Give Feedback</a></div>`; //not just a, because that's also how intra42 does it
+        eval.firstElementChild.innerText = `Please submit honest feedback for your eval with ${peer_name}`;
+        eval.lastElementChild.firstElementChild.addEventListener("click", function() {showPopup(id)});
 
-    eval_list.appendChild(eval);
-    evals.get(id).eval_slot = eval;
+        eval_list.appendChild(eval);
+        evals.get(id).eval_slot = eval;
+        create_popup(id, res.fields, res.evaluation.corrector);
+    });
 }
 
 //iterates through the details for the eval and creates as many elements as needed
-function create_popup(id, content)
+function create_popup(id, content, corrector)
 {
     let popup = document.createElement('div');
 
@@ -66,7 +75,10 @@ function create_popup(id, content)
         <span class="btn btn-primary" style="margin: 0 auto; border-radius: 5px; font-size: 17px; padding: 6px 18px;">Submit</span>
     </form>`;
 
-    popup.firstElementChild.firstElementChild.nextElementSibling.innerText = `🔊 Feedback for ${evals.get(id).peer.team} 🔊`;
+    if (corrector == intra_name)
+        popup.firstElementChild.firstElementChild.nextElementSibling.innerText = `🔊 Feedback for ${evals.get(id).peer.team} 🔊`;
+    else
+        popup.firstElementChild.firstElementChild.nextElementSibling.innerText = `🔊 Feedback for ${corrector} 🔊`;
 
     content.forEach(element => {
         if (element.data_type.Range != null)
@@ -79,6 +91,7 @@ function create_popup(id, content)
     popup.firstElementChild.lastElementChild.addEventListener("click", function() {submitForm(id)});
 
     document.body.appendChild(popup);
+    popup.style.visibility  = "hidden";
     evals.get(id).popup = popup;
 }
 
@@ -140,15 +153,10 @@ function create_textarea(content, content_div)
 //creates, hides or shows popup
 function showPopup(id)
 {
-    if (evals.get(id).popup == undefined)
-        browser.runtime.sendMessage({uri : `/feedback/${id}/info`}).then(res => create_popup(id, res.fields));
+    if (evals.get(id).popup.style.visibility == "hidden")
+        evals.get(id).popup.style.visibility  = "visible";
     else
-    {
-        if (evals.get(id).popup.style.visibility == "hidden")
-            evals.get(id).popup.style.visibility  = "visible";
-        else
-            evals.get(id).popup.style.visibility  = "hidden";
-    }
+        evals.get(id).popup.style.visibility  = "hidden";
 }
 
 //extracts and POSTs data to the server
