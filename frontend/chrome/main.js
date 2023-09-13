@@ -75,6 +75,7 @@ function create_popup(id, content, corrector)
         <span class="btn btn-primary" style="margin: 0 auto; border-radius: 5px; font-size: 17px; padding: 6px 18px;">Submit</span>
     </form>`;
 
+    popup.firstElementChild.classList.add("container-item");
     if (corrector == intra_name)
         popup.firstElementChild.firstElementChild.nextElementSibling.innerText = `🔊 Feedback for ${evals.get(id).peer.team} 🔊`;
     else
