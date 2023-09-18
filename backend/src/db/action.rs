@@ -64,7 +64,7 @@ impl Database {
     ) -> anyhow::Result<Vec<(EvaluationFeedback, Evaluation)>> {
         let feedback = evaluation_feedback::table
             .inner_join(evaluation::table)
-            // .filter(evaluation::begin_at.le(Utc::now().naive_utc() - chrono::Duration::minutes(15)))
+            .filter(evaluation::begin_at.ge(Utc::now().naive_utc() - chrono::Duration::weeks(2)))
             .filter(evaluation_feedback::user_id.eq(user_id))
             .filter(evaluation_feedback::feedback_at.is_null())
             .get_results(&mut self.pool.get().await?)
