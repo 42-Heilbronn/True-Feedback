@@ -20,6 +20,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .service(
                 web::resource("/{feedback_id}/info").route(web::get().to(evaluation_feedback_info)),
             )
+            .service(web::resource("/{feedback_id}/ignore").route(web::post().to(ignore_feedback)))
             .service(web::resource("/{feedback_id}").route(web::post().to(post_feedback))),
     );
 }
@@ -41,7 +42,11 @@ async fn missing_feedback(id: Identity, db: web::Data<Database>) -> Result<HttpR
     let missing_feedback = db
         .get_missing_evaluation_feedbacks_from_user(user_id)
         .await?;
-    log::debug!("for user: {}, found feedbacks {:?}", user_id, missing_feedback);
+    log::debug!(
+        "for user: {}, found feedbacks {:?}",
+        user_id,
+        missing_feedback
+    );
     let missing_feedback: Vec<FeedbackListEntry> = missing_feedback
         .into_iter()
         .map(|(feedback, evaluation)| FeedbackListEntry {
@@ -152,6 +157,21 @@ async fn post_feedback(
     }
     feedback.feedback_id = Some(feedback_post.current_id());
     feedback.feedback = Some(serde_json::json!(feedback_post));
+    db.update_evaluation_feedback(feedback).await?;
+    Ok(HttpResponse::Ok().finish())
+}
+
+async fn ignore_feedback(
+    id: Identity,
+    db: web::Data<Database>,
+    feedback_id: web::Path<i32>
+) -> Result<HttpResponse, ApiError> {
+    let user_id: i32 = id.id().unwrap().parse::<i32>().unwrap();
+    let mut feedback = db.get_evaluation_feedback(*feedback_id).await?;
+    if user_id.ne(&feedback.user_id) | feedback.feedback.is_some() {
+        return Err(ApiError::Unauthorized);
+    }
+    feedback.feedback_at = Some(chrono::Utc::now().naive_utc());
     db.update_evaluation_feedback(feedback).await?;
     Ok(HttpResponse::Ok().finish())
 }

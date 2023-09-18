@@ -66,7 +66,7 @@ impl Database {
             .inner_join(evaluation::table)
             // .filter(evaluation::begin_at.le(Utc::now().naive_utc() - chrono::Duration::minutes(15)))
             .filter(evaluation_feedback::user_id.eq(user_id))
-            .filter(evaluation_feedback::feedback.is_null())
+            .filter(evaluation_feedback::feedback_at.is_null())
             .get_results(&mut self.pool.get().await?)
             .await?;
         Ok(feedback)
