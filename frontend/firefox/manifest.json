@@ -1,33 +1,46 @@
 {
   "manifest_version": 3,
   "name": "True Feedback",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Private feedback for evaluations on intra.42.fr",
-
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "trueFeedback@42heilbronn.de",
+      "strict_min_version": "109.0",
+      "update_url": "https://dev01.playground.extension.cdn.42heilbronn.de/update.json"
+    }
+  },
   "icons": {
     "48": "icons/48.png",
     "96": "icons/96.png"
   },
-
   "host_permissions": [
     "https://dev01.playground.extension.42heilbronn.de/*",
-		"https://*.intra.42.fr/*"
+    "https://*.intra.42.fr/*"
   ],
-
   "content_scripts": [
     {
-      "matches": ["https://profile.intra.42.fr/*"],
-      "js": ["main.js"],
+      "matches": [
+        "https://profile.intra.42.fr/*"
+      ],
+      "js": [
+        "main.js"
+      ],
       "run_at": "document_end"
     },
     {
-      "matches": ["https://dev01.playground.extension.42heilbronn.de/*"],
-      "js": ["redirect.js"],
+      "matches": [
+        "https://dev01.playground.extension.42heilbronn.de/*"
+      ],
+      "js": [
+        "redirect.js"
+      ],
       "run_at": "document_end"
     }
   ],
-
   "background": {
-    "scripts": ["requests.js"]
-  } 
+    "scripts": [
+      "requests.js"
+    ]
+  }
 }
