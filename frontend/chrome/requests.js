@@ -9,6 +9,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return get_missing(sendResponse);
     else if (request.uri.endsWith("info"))
         return get_details(request.uri, sendResponse);
+    else if (request.uri.endsWith("/ignore"))
+        return send_ignore(request.uri, sendResponse);
     else if (request.uri.startsWith("/feedback"))
         return send_feedback(request.uri, request.form, sendResponse);
     console.log(request);
@@ -33,6 +35,19 @@ function get_details(uri, sendResponse)
     fetch(`${SERVER_IP}${uri}`)
     .then(res => res.json()).then(json => sendResponse(json));
     return true;
+}
+
+function send_ignore(uri, sendResponse)
+{
+    fetch(`${SERVER_IP}${uri}`, {
+            method: "POST",
+            body: JSON.stringify({ }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+        .then(sendResponse(null));
+        return true;
 }
 
 function send_feedback(uri, data, sendResponse)

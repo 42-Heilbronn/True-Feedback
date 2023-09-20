@@ -8,6 +8,8 @@ browser.runtime.onMessage.addListener((request, sender) => {
         return get_missing();
     else if (request.uri.endsWith("info"))
         return get_details(request.uri);
+    else if (request.uri.endsWith("/ignore"))
+        return send_ignore(request.uri);
     else if (request.uri.startsWith("/feedback"))
         return send_feedback(request.uri, request.form);
 });
@@ -33,6 +35,20 @@ function get_details(uri)
     return new Promise((resolve, reject) => {
         fetch(`${SERVER_IP}${uri}`)
         .then(res => resolve(res.json()));
+    });
+}
+
+function send_ignore(uri)
+{
+    return new Promise((resolve, reject) => {
+        fetch(`${SERVER_IP}${uri}`, {
+            method: "POST",
+            body: JSON.stringify({ }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+        .then(resolve(null));
     });
 }
 
