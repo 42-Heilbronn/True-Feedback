@@ -163,7 +163,7 @@ function create_ignore(id)
     <div class="modal-dialog">
         <h4 style="margin-top: 0px; padding-top: 0px;">Are you sure you don't want to submit any feedback?</h4>
         <div class="modal-footer" style="padding-bottom: 0px;">
-            <button class="btn btn-default" data-dismiss="modal" type="button">Cancel</button>
+            <span class="btn btn-default">Cancel</span>
             <span class="btn btn-danger">Submit no feedback</span>
         </div>
     </div>`;

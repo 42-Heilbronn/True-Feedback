@@ -20,27 +20,17 @@
   ],
   "content_scripts": [
     {
-      "matches": [
-        "https://profile.intra.42.fr/*"
-      ],
-      "js": [
-        "main.js"
-      ],
+      "matches": ["https://profile.intra.42.fr/*"],
+      "js": ["main.js"],
       "run_at": "document_end"
     },
     {
-      "matches": [
-        "https://dev01.playground.extension.42heilbronn.de/*"
-      ],
-      "js": [
-        "redirect.js"
-      ],
+      "matches": ["https://dev01.playground.extension.42heilbronn.de/*"],
+      "js": ["redirect.js"],
       "run_at": "document_end"
     }
   ],
   "background": {
-    "scripts": [
-      "requests.js"
-    ]
+    "scripts": ["requests.js"]
   }
 }
